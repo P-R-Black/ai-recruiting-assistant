@@ -4,11 +4,11 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 
-
 app = FastAPI(
     title="AI Recruiting Assistant API",
     version="0.1.0"
 )
+print('debugger APP', app)
 
 @app.get("/health")
 async def health_check(db: Session = Depends(get_db)):
