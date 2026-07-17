@@ -37,6 +37,8 @@ def update_job(db: Session, job_id: UUID, job_data: JobUpdate) -> Job | None:
         return None
     
     updates = job_data.model_dump(exclude_unset=True)
+    if "job_url" in updates:
+        updates["job_url"] = str(updates["job_url"])
     
     for key, value in updates.items():
         setattr(job, key, value)

@@ -50,8 +50,11 @@ def test_list_jobs(db, job_data):
 
 
 def test_update_job(db, job_data):
+    update = JobUpdate(title="Updated Title")
+    
     created = create_job(db, job_data)
-    updated = update_job(db, created.id, JobUpdate(title="Updated Title"))
+    # updated = update_job(db, created.id, {"title": "Updated Title"})
+    updated = update_job(db, created.id, job_data=update)
 
     assert updated is not None
     assert updated.title == "Updated Title"

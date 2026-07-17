@@ -1,9 +1,16 @@
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.core.database import SessionLocal
 from app.jobs.models import Job
 from app.jobs.schemas import JobCreate
+from app.main import app
+
+
+@pytest.fixture
+def client():
+    return TestClient(app)
 
 
 @pytest.fixture
@@ -21,6 +28,23 @@ def job_data() -> JobCreate:
         job_url="https://example.com/jobs/1",
         source="mail",
     )
+
+@pytest.fixture
+def job_payload():
+    return {
+        "title": "Senior Python Developer",
+        "company": "OpenAI",
+        "location": "Remote",
+        "employment_type": "Full-time",
+        "remote_type": "Remote",
+        "salary_min": 150000,
+        "salary_max": 200000,
+        "salary_currency": "USD",
+        "description": "A long enough description for validation purposes.",
+        "job_url": "https://example.com/jobs/1",
+        "source": "mail",
+    }
+
 
 @pytest.fixture
 def db() -> Session:
