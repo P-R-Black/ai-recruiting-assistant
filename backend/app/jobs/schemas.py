@@ -92,8 +92,9 @@ class JobUpdate(BaseModel):
 # Future endpoint:
 # PATCH /jobs/{job_id}/status
 # Used to update only the job status.
-# class JobStatusUpdate(BaseModel):
-#     status: JobStatus
+class JobStatusUpdate(BaseModel):
+    status: JobStatus
+    
 
 class JobResponse(JobBase):
     id: UUID

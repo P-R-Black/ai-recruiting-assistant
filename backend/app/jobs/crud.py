@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from app.jobs.models import Job
+from app.jobs.models import Job, JobStatus
 from app.jobs.schemas import JobCreate, JobUpdate
 
 
@@ -56,3 +56,16 @@ def delete_job(db: Session, job_id: UUID) -> bool:
     db.delete(job)
     db.commit()
     return True
+
+
+def update_job_status(db: Session, job_id: UUID, status: JobStatus) -> Job | None:
+    job = get_job(db, job_id)
+    
+    if not job:
+        return None
+    
+    job.status = status
+    db.commit()
+    db.refresh(job)
+    
+    return job

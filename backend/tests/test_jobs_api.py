@@ -105,6 +105,29 @@ def test_delete_job_endpoint(client, db, job_payload):
     job = db.get(Job, job_id)
     assert job is None
 
+
+def test_update_job_status_endpoint(client, job_payload):
+    # Create a job
+    response = client.post("/jobs/", json=job_payload)
+    assert response.status_code == 201
+
+    job_id = UUID(response.json()["id"])
+
+    # Update the job status
+    status_payload = {"status": "reviewed"}
+    response = client.patch(f"/jobs/{job_id}/status", json=status_payload)
+
+    assert response.status_code == 200
+
+    data = response.json()
+    assert data["status"] == "reviewed"  # Assuming the status is updated to "reviewed" in the backend logic
+
+    # Verify database contents
+    # job = db.get(Job, job_id)
+    # assert job_payload is not None
+    # assert job_payload.status.value == "closed"
+
+
 """
 Run individual tests
 uv run pytest tests/test_jobs_api.py

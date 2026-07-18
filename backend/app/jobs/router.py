@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.jobs import crud
-from app.jobs.schemas import JobCreate, JobResponse, JobUpdate
+from app.jobs.schemas import JobCreate, JobResponse, JobStatusUpdate, JobUpdate
 
 router = APIRouter(
     prefix="/jobs",
@@ -46,6 +46,20 @@ def update_job_endpoint(
     if updated is None:
         raise HTTPException(status_code=404, detail="Job not found")
     
+    return updated
+
+
+@router.patch("/{job_id}/status", response_model=JobResponse)
+def update_job_status_endpoint(
+    job_id: UUID,
+    status_update: JobStatusUpdate,
+    db: Session = Depends(get_db),
+    ):
+
+    updated = crud.update_job_status(db, job_id, status_update.status)
+    if updated is None:
+        raise HTTPException(status_code=404, detail="Job not found")
+
     return updated
 
 

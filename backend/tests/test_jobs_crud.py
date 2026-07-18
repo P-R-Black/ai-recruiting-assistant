@@ -1,7 +1,7 @@
 import uuid
 from uuid import UUID
 
-from app.jobs.crud import create_job, delete_job, get_job, list_jobs, update_job
+from app.jobs.crud import create_job, delete_job, get_job, list_jobs, update_job, update_job_status
 from app.jobs.models import Job, JobStatus
 from app.jobs.schemas import JobUpdate
 
@@ -62,6 +62,15 @@ def test_update_job(db, job_data):
     assert updated.id == created.id
 
 
+def test_update_job_status(db, job_data):
+    created = create_job(db, job_data)
+    updated = update_job_status(db, created.id, JobStatus.REVIEWED)
+
+    assert updated is not None
+    assert updated.status == JobStatus.REVIEWED
+    assert updated.id == created.id
+
+
 def test_update_job_not_found(db):
     db.query(Job).delete()
     db.commit()
@@ -74,6 +83,17 @@ def test_update_job_not_found(db):
 
     assert updated is None
 
+def test_update_job_status_invalid_status(client, job_payload):
+    response = client.post("/jobs/", json=job_payload)
+    job_id = UUID(response.json()["id"])
+
+    response = client.patch(
+        f"/jobs/{job_id}/status",
+        json={"status": "closed"},
+    )
+
+    assert response.status_code == 422
+    
 
 def test_delete_job(db, job_data):
     
@@ -92,3 +112,5 @@ def test_delete_job_not_found(db):
     deleted = delete_job(db, uuid.uuid4())
 
     assert deleted is False
+
+
