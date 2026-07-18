@@ -120,7 +120,7 @@ def test_update_job_status_endpoint(client, job_payload):
     assert response.status_code == 200
 
     data = response.json()
-    assert data["status"] == "reviewed"  # Assuming the status is updated to "reviewed" in the backend logic
+    assert data["status"] == "reviewed"
 
     # Verify database contents
     # job = db.get(Job, job_id)
