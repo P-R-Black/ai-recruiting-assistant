@@ -1,23 +1,28 @@
+import pytest
 from app.core.config import settings
 from app.mail.providers.icloud import create_icloud_settings
 
 from app.mail.imap import connect_imap
 
+if not settings.icloud_username:
+    pytest.skip("iCloud credentials not configured")
+else:
+    def test_connect_to_real_icloud():
 
-def test_connect_to_real_icloud():
-    icloud_settings = create_icloud_settings(
-        username=settings.icloud_username,
-        password=settings.icloud_password,
-    )
-    print("icloud_settings:", icloud_settings)
+        icloud_settings = create_icloud_settings(
+            username=settings.icloud_username,
+            password=settings.icloud_password,
+        )
+        
+        print("icloud_settings:", icloud_settings)
 
-    connection = connect_imap(icloud_settings)
+        connection = connect_imap(icloud_settings)
 
-    print("Connected!")
+        print("Connected!")
 
-    connection.logout()
+        connection.logout()
 
-    print("Logged out!")
+        print("Logged out!")
 
 
 
