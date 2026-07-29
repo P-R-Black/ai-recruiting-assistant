@@ -1,4 +1,6 @@
 import pytest
+from datetime import datetime, UTC
+
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
@@ -7,6 +9,8 @@ from app.jobs.models import Job
 from app.jobs.schemas import JobCreate
 from app.main import app
 
+from app.mail.models import EmailProvider, Email
+from app.mail.schemas import EmailCreate, EmailProvider
 
 @pytest.fixture
 def client():
@@ -69,3 +73,16 @@ def db() -> Session:
     # finally:
     #     session.rollback()
     #     session.close()
+
+
+@pytest.fixture
+def email_data():
+    return EmailCreate(
+        provider=EmailProvider.APPLE,
+        message_id="<message-1@example.com>",
+        subject="Python Developer",
+        sender="jobs@example.com",
+        recipient="me@example.com",
+        received_at=datetime.now(UTC),
+        raw_body="This is a sample job email"
+    )

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.jobs import crud
 from app.jobs.schemas import JobCreate, JobResponse, JobStatusUpdate, JobUpdate
+from app.jobs.models import JobSource, JobStatus
 
 router = APIRouter(
     prefix="/jobs",
@@ -22,8 +23,34 @@ def create_new_job_endpoint(
 
 
 @router.get("/", response_model=list[JobResponse])
-def list_jobs_endpoint(db: Session = Depends(get_db)):
-    return crud.list_jobs(db)
+def list_jobs_endpoint(
+    db: Session = Depends(get_db), 
+    skip: int = 0, 
+    limit: int = 20,
+    status: JobStatus | None = None,
+    source: JobSource | None = None,
+    company: str | None = None,
+    location: str | None = None,
+    employment_type: str | None = None,
+    remote_type: str | None = None,
+    salary_min: int | None = None,
+    salary_max: int | None = None,
+    salary_currency: str | None = None,
+    
+    ):
+    return crud.list_jobs(
+        db, 
+        skip=skip, 
+        limit=limit, 
+        status=status, 
+        source=source, 
+        company=company, 
+        location=location, 
+        employment_type=employment_type, 
+        remote_type=remote_type, 
+        salary_min=salary_min, 
+        salary_max=salary_max, 
+        salary_currency=salary_currency)
 
 
 @router.get("/{job_id}", response_model=JobResponse)

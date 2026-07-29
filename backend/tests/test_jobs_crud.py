@@ -3,7 +3,7 @@ from uuid import UUID
 
 from app.jobs.crud import create_job, delete_job, get_job, list_jobs, update_job, update_job_status
 from app.jobs.models import Job, JobStatus
-from app.jobs.schemas import JobUpdate
+from app.jobs.schemas import JobCreate, JobUpdate
 
 
 def test_create_job(db, job_data):
@@ -47,6 +47,61 @@ def test_list_jobs(db, job_data):
 
     assert len(jobs) == 1
     assert jobs[0].id == created.id
+
+
+def test_list_jobs_filter_by_status(db, job_data):
+    created = create_job(db, job_data)
+
+    reviewed = JobCreate(
+        **{
+            **job_data.model_dump(mode="json"),
+            "title": "Reviewed Job",
+        }
+    )
+
+    created = create_job(db, reviewed)
+    update_job_status(db, created.id, JobStatus.REVIEWED)
+
+    jobs = list_jobs(db, status=JobStatus.REVIEWED)
+
+    assert len(jobs) == 1
+    assert jobs[0].id == created.id
+    assert jobs[0].status == JobStatus.REVIEWED
+
+
+def test_list_jobs_filter_by_company(db, job_data):
+    created = create_job(db, job_data)
+
+    second = JobCreate(
+        **{
+            **job_data.model_dump(mode="json"),
+            "title": "OpenAI Job",
+            "company": "Backend Engineer",
+        }
+    )
+
+    create_job(db, second)
+    jobs = list_jobs(db, company="OpenAI")
+    assert len(jobs) == 1
+    assert jobs[0].id == created.id
+    assert jobs[0].company == "OpenAI"
+
+
+def test_list_jobs_pagination(db, job_data):
+    for i in range(5):
+        job = JobCreate(
+            **{
+                **job_data.model_dump(mode="json"),
+                "title": f"Job {i}",
+            }
+        )
+        create_job(db, job)
+
+    jobs = list_jobs(db, skip=2, limit=2)
+
+    assert len(jobs) == 2
+    assert jobs[0].title == "Job 2"
+    assert jobs[-1].title == "Job 1"
 
 
 def test_update_job(db, job_data):

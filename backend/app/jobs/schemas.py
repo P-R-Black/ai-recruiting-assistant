@@ -89,12 +89,23 @@ class JobUpdate(BaseModel):
         return self
 
 
-# Future endpoint:
-# PATCH /jobs/{job_id}/status
-# Used to update only the job status.
 class JobStatusUpdate(BaseModel):
     status: JobStatus
     
+# Update to use later
+# class JobFilter(BaseModel):
+#     skip: int = 0
+#     limit: int = 20
+#     status: JobStatus | None = None
+#     source: JobSource | None = None
+#     company: Company | None = None
+#     location: Location | None = None
+#     employment_type: EmploymentType | None = None
+#     remote_type: RemoteType | None = None
+#     salary_min: Salary | None = None
+#     salary_max: Salary | None = None
+#     salary_currency: Currency | None = None
+
 
 class JobResponse(JobBase):
     id: UUID

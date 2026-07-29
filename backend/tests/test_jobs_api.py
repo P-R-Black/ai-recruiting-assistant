@@ -32,6 +32,39 @@ def test_list_jobs_endpoint(client, db):
     assert isinstance(data, list)
 
 
+def test_list_jobs_filter_status_endpoint(client, db, job_payload):
+    # Create a job with status "new"
+    response = client.post("/jobs/", json=job_payload)
+    assert response.status_code == 201
+
+    # Update the job status to "reviewed"
+    job_id = UUID(response.json()["id"])
+    response = client.patch(f"/jobs/{job_id}/status", json={"status": "reviewed"})
+    assert response.status_code == 200
+
+    # List jobs with status "reviewed"
+    response = client.get("/jobs/?status=reviewed")
+    assert response.status_code == 200
+    data = response.json()
+    
+    assert isinstance(data, list)
+    assert any(job["id"] == str(job_id) for job in data)
+
+
+def test_list_jobs_filter_company_endpoint(client, db, job_payload):
+    # Create a job with a specific company
+    response = client.post("/jobs/", json=job_payload)
+    assert response.status_code == 201
+
+    # List jobs with the specific company
+    response = client.get(f"/jobs/?company={job_payload['company']}")
+    assert response.status_code == 200
+    data = response.json()
+    
+    assert isinstance(data, list)
+    assert any(job["company"] == job_payload["company"] for job in data)
+    
+
 def test_get_job_endpoint(client, db, job_payload):
    
     response = client.post("/jobs/", json=job_payload)
@@ -122,10 +155,6 @@ def test_update_job_status_endpoint(client, job_payload):
     data = response.json()
     assert data["status"] == "reviewed"
 
-    # Verify database contents
-    # job = db.get(Job, job_id)
-    # assert job_payload is not None
-    # assert job_payload.status.value == "closed"
 
 
 """

@@ -1,0 +1,14 @@
+Milestone 3 — Email Import
+Create an email module (instead of gmail)
+Connect to an IMAP mailbox
+Download messages
+Store raw emails
+Deduplicate
+Parse job emails
+AI extraction
+Create Job records
+This approach keeps your project provider-agnostic and aligns well with your earlier 
+design goal that the application should be modular and extensible. Later, if you want to
+ add Gmail or Microsoft Graph for richer integrations, you can do so by adding new provider 
+ implementations without changing the rest of the system.
+ ✅

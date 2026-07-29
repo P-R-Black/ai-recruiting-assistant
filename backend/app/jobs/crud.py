@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from app.jobs.models import Job, JobStatus
+from app.jobs.models import Job, JobSource, JobStatus
 from app.jobs.schemas import JobCreate, JobUpdate
 
 
@@ -25,8 +25,42 @@ def get_job(db: Session, job_id: UUID) -> Job | None:
     )
 
 
-def list_jobs(db: Session) -> list[Job]:
-    return db.query(Job).all()
+def list_jobs(
+        db: Session, 
+        skip: int = 0, 
+        limit: int = 20,
+        status: JobStatus | None = None,
+        source: JobSource | None = None,
+        company: str | None = None,
+        location: str | None = None,
+        employment_type: str | None = None,
+        remote_type: str | None = None,
+        salary_min: int | None = None,
+        salary_max: int | None = None,
+        salary_currency: str | None = None,
+        ) -> list[Job]:
+    
+    query = db.query(Job)
+    if status is not None:
+        query = query.filter(Job.status == status)
+    if source is not None:
+        query = query.filter(Job.source == source)
+    if company is not None:
+        query = query.filter(Job.company.ilike(f"%{company}%"))
+    if location is not None:
+        query = query.filter(Job.location.ilike(f"%{location}%"))
+    if employment_type is not None:
+        query = query.filter(Job.employment_type.ilike(f"%{employment_type}%"))
+    if remote_type is not None:
+        query = query.filter(Job.remote_type.ilike(f"%{remote_type}%"))
+    if salary_min is not None:
+        query = query.filter(Job.salary_min >= salary_min)
+    if salary_max is not None:
+        query = query.filter(Job.salary_max <= salary_max)
+    if salary_currency is not None:
+        query = query.filter(Job.salary_currency.ilike(f"%{salary_currency}%"))
+
+    return query.order_by(Job.created_at.desc()).offset(skip).limit(limit).all()
 
 
 def update_job(db: Session, job_id: UUID, job_data: JobUpdate) -> Job | None:
