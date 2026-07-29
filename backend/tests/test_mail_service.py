@@ -1,26 +1,8 @@
-import uuid
-import pytest
-from uuid import UUID
 
-from copy import deepcopy
 from datetime import datetime, timezone
-from unittest.mock import MagicMock, patch
 
-from email.message import EmailMessage
-from app.mail.schemas import EmailCreate, EmailProvider
 from app.mail.models import EmailProvider
-
-from app.mail.crud import (
-    create_email, get_email, list_emails, update_email, 
-    delete_email, get_email_by_message_id, mark_email_processed,
-)
-
-
-from app.mail.service import (
-    IMAPSettings, JOB_EMAIL_THRESHOLD
-    )
-
-
+from app.mail.schemas import EmailCreate
 
 # from app.mail.detector import
 # from app.mail.importer import

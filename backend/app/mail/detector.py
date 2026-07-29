@@ -1,16 +1,16 @@
-from email import policy
-from email.utils import parsedate_to_datetime, parseaddr
+from email.utils import parseaddr
 
-from app.mail import crud
 from app.mail.schemas import EmailCreate
-from app.mail.models import Email
-from app.mail.service import JobDetectionResult
 from app.mail.service import (
-    JOB_EMAIL_THRESHOLD, JOB_KEYWORDS, FREE_EMAIL_PROVIDERS, JOB_BOARD_DOMAINS, 
-    REJECTION_KEYWORDS, UNSUBSCRIBE_KEYWORDS, RECRUITER_KEYWORDS
-    )
-
-
+    FREE_EMAIL_PROVIDERS,
+    JOB_BOARD_DOMAINS,
+    JOB_EMAIL_THRESHOLD,
+    JOB_KEYWORDS,
+    RECRUITER_KEYWORDS,
+    REJECTION_KEYWORDS,
+    UNSUBSCRIBE_KEYWORDS,
+    JobDetectionResult,
+)
 
 
 def detect_job_email(email: EmailCreate) -> JobDetectionResult:

@@ -1,13 +1,15 @@
-from app.mail import crud
-from app.mail.schemas import EmailCreate, EmailProvider
-from app.mail.models import Email
-from app.mail.service import ExtractedValue, ExtractJob
+from app.mail.schemas import EmailCreate
 from app.mail.service import (
-    get_clean_lines, clean_extracted_job_title, looks_like_company_name, looks_like_location_name,
-    looks_like_salary)
+    URL_PATTERN,
+    ExtractedValue,
+    ExtractJob,
+    clean_extracted_job_title,
+    get_clean_lines,
+    looks_like_company_name,
+    looks_like_location_name,
+    looks_like_salary,
+)
 
-
-from app.mail.service import URL_PATTERN
 
 def extract_job_information(email: EmailCreate) -> ExtractJob:
     searchable = " ".join([
@@ -60,7 +62,8 @@ def extract_job_title(text: str) -> str | None:
 
 
 def looks_like_job_title(text: str) -> str | None:
-    if not text: return False
+    if not text:
+        return False
 
     text = text.strip().lower()
 

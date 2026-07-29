@@ -1,13 +1,7 @@
-from datetime import datetime, timezone
-
-from email.message import EmailMessage
-from app.mail.schemas import EmailCreate, EmailProvider
-from app.mail.models import EmailProvider
 
 
-from app.mail.importer import (
-    import_email, import_emails
-    )
+
+from app.mail.importer import import_email, import_emails
 
 
 def test_import_email_creates_new_email(db, email_data):

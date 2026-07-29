@@ -1,8 +1,8 @@
 import pytest
-from app.core.config import settings
-from app.mail.providers.icloud import create_icloud_settings
 
+from app.core.config import settings
 from app.mail.imap import connect_imap
+from app.mail.providers.icloud import create_icloud_settings
 
 if not settings.icloud_username:
     pytest.skip("iCloud credentials not configured")

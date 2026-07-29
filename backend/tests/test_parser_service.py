@@ -1,12 +1,8 @@
-from datetime import datetime, timezone
 
 from email.message import EmailMessage
-from app.mail.schemas import EmailCreate, EmailProvider
-from app.mail.models import EmailProvider
 
-from app.mail.parser import (
-    parse_email, extract_plain_text, extract_message_body, extract_html
-    )
+from app.mail.models import EmailProvider
+from app.mail.parser import extract_html, extract_message_body, extract_plain_text, parse_email
 
 
 def test_parse_email():

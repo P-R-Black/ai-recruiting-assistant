@@ -1,15 +1,15 @@
 from datetime import datetime, timezone
 
-from email.message import EmailMessage
-from app.mail.schemas import EmailCreate, EmailProvider
-from app.mail.models import EmailProvider
-
-
 from app.mail.detector import (
-    detect_job_email, calculate_job_keyword_score, calculate_recruiter_sender_score,
-    calculate_job_board_sender_score, calculate_rejection_score, calculate_unsubscribe_score
-    )
-
+    calculate_job_board_sender_score,
+    calculate_job_keyword_score,
+    calculate_recruiter_sender_score,
+    calculate_rejection_score,
+    calculate_unsubscribe_score,
+    detect_job_email,
+)
+from app.mail.models import EmailProvider
+from app.mail.schemas import EmailCreate
 from app.mail.service import JOB_EMAIL_THRESHOLD
 
 

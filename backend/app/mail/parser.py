@@ -1,13 +1,10 @@
-from email.parser import BytesParser
-
 from datetime import datetime, timezone
 from email import policy
-from email.utils import parsedate_to_datetime, parseaddr
+from email.parser import BytesParser
+from email.utils import parsedate_to_datetime
 
-from app.mail import crud
-from app.mail.schemas import EmailCreate, EmailProvider
-from app.mail.models import Email
-
+from app.mail.models import EmailProvider
+from app.mail.schemas import EmailCreate
 
 # ----------------------------
 # Parsing

@@ -1,10 +1,7 @@
+import re
 from dataclasses import dataclass, field
 
-import re
-
 from app.mail.models import EmailProvider
-
-
 
 JOB_KEYWORDS = [
     "job",
@@ -132,7 +129,8 @@ class ExtractedValue:
 
 
 def looks_like_job_title(text: str) -> str | None:
-    if not text: return False
+    if not text: 
+        return False
 
     text = text.strip().lower()
 
@@ -152,7 +150,8 @@ def looks_like_job_title(text: str) -> str | None:
 
 
 def clean_extracted_job_title(text: str) -> str | None:
-    if not text: return ""
+    if not text: 
+        return ""
 
     words = text.split()
     midpoint = len(words) // 2
@@ -169,7 +168,8 @@ def clean_extracted_job_title(text: str) -> str | None:
 
 
 def looks_like_company_name(text: str) -> str | None:
-    if not text: return False
+    if not text: 
+        return False
 
     text = text.strip().lower()
 
@@ -190,7 +190,8 @@ def looks_like_company_name(text: str) -> str | None:
 
 
 def looks_like_location_name(text: str) -> str | None:
-    if not text: return False
+    if not text: 
+        return False
 
     text = text.strip().lower()
 
@@ -208,7 +209,8 @@ def looks_like_location_name(text: str) -> str | None:
 
 
 def looks_like_salary(text: str) -> str | None:
-    if not text: return False
+    if not text: 
+        return False
 
     text = text.strip().lower()
 

@@ -1,17 +1,12 @@
-import pytest
-
 from datetime import datetime, timezone
-
 from unittest.mock import MagicMock, patch
 
-from email.message import EmailMessage
-from app.mail.schemas import EmailCreate, EmailProvider
-from app.mail.models import EmailProvider
-from app.mail.service import IMAPSettings
+import pytest
 
-from app.mail.imap import (
-    connect_imap, search_messages, fetch_message, fetch_imap_messages
-    )
+from app.mail.imap import connect_imap, fetch_imap_messages, fetch_message, search_messages
+from app.mail.models import EmailProvider
+from app.mail.schemas import EmailCreate
+from app.mail.service import IMAPSettings
 
 
 def sample_job_email() -> EmailCreate:

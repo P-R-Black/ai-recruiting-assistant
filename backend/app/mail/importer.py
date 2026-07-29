@@ -3,8 +3,6 @@ from sqlalchemy.orm import Session
 from app.mail import crud
 from app.mail.schemas import EmailCreate
 
-
-
 # ----------------------------
 # Import helpers
 # ----------------------------

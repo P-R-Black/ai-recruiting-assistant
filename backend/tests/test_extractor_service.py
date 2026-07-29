@@ -1,13 +1,15 @@
 from datetime import datetime, timezone
 
-from email.message import EmailMessage
-from app.mail.schemas import EmailCreate, EmailProvider
-from app.mail.models import EmailProvider
-
 from app.mail.extractor import (
-    extract_apply_url, extract_company_name, extract_job_information, extract_job_title,
-    extract_location, extract_salary
-    )
+    extract_apply_url,
+    extract_company_name,
+    extract_job_information,
+    extract_job_title,
+    extract_location,
+    extract_salary,
+)
+from app.mail.models import EmailProvider
+from app.mail.schemas import EmailCreate
 
 
 def test_extract_job_information():

@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.jobs import crud
-from app.jobs.schemas import JobCreate, JobResponse, JobStatusUpdate, JobUpdate
 from app.jobs.models import JobSource, JobStatus
+from app.jobs.schemas import JobCreate, JobResponse, JobStatusUpdate, JobUpdate
 
 router = APIRouter(
     prefix="/jobs",

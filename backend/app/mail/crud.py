@@ -2,9 +2,9 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-
 from app.mail.models import Email
-from app.mail.schemas import EmailCreate, EmailUpdate, EmailFilter
+from app.mail.schemas import EmailCreate, EmailFilter, EmailUpdate
+
 
 def create_email(db: Session, email: EmailCreate) -> Email:
     db_email = Email(**email.model_dump(mode="json"))

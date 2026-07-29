@@ -1,6 +1,7 @@
 
 from backend.app.mail.service import IMAPSettings
-from app.mail.schemas import EmailProvider
+
+from app.mail.models import EmailProvider
 
 # ----------------------------
 # Outlook API

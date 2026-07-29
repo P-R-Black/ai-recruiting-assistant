@@ -1,16 +1,16 @@
-import pytest
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.core.database import SessionLocal
 from app.jobs.models import Job
 from app.jobs.schemas import JobCreate
+from app.mail.models import EmailProvider
+from app.mail.schemas import EmailCreate
 from app.main import app
 
-from app.mail.models import EmailProvider, Email
-from app.mail.schemas import EmailCreate, EmailProvider
 
 @pytest.fixture
 def client():
