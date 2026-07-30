@@ -9,7 +9,6 @@ app = FastAPI(
     title="AI Recruiting Assistant API",
     version="0.1.0"
 )
-print('debugger APP', app)
 
 
 app.include_router(jobs_router)

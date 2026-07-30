@@ -103,16 +103,17 @@ def test_fetch_message():
 
     client.fetch.return_value = (
         "OK",
-        [(b"1 (RFC822 {35})", raw)],
+        [(b"1 (BODY[] {35})", raw)],
     )
 
     result = fetch_message(client, b"1")
+   
 
     assert result == raw
 
     client.fetch.assert_called_once_with(
         b"1",
-        "(RFC822)",
+        "(BODY[])",
     )
 
 

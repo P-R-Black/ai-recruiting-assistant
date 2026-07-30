@@ -153,7 +153,6 @@ def test_detect_job_email_returns_reasons():
     result = detect_job_email(email)
 
     assert len(result.reasons) > 0
-    print("DEBUG result.reasons", result.reasons)
     assert any("Job board" in reason for reason in result.reasons)
 
 def test_detect_job_email_linkedin():

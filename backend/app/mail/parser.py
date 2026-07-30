@@ -32,7 +32,6 @@ def parse_email(raw_email: bytes, provider: EmailProvider) -> EmailCreate:
         received_at = datetime.now(timezone.utc)
 
     raw_body = extract_message_body(message)
-    print('raw_body:', raw_body)
 
     return EmailCreate(
         provider=provider,

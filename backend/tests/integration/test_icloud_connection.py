@@ -1,12 +1,11 @@
 import pytest
 
 from app.core.config import settings
-from app.mail.imap import connect_imap, search_messages, fetch_message
-from app.mail.parser import parse_email
 from app.mail.detector import detect_job_email
-from app.mail.providers.icloud import create_icloud_settings
-
+from app.mail.imap import connect_imap, fetch_message, search_messages
 from app.mail.models import EmailProvider
+from app.mail.parser import parse_email
+from app.mail.providers.icloud import create_icloud_settings
 
 
 @pytest.fixture

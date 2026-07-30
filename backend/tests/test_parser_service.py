@@ -18,8 +18,6 @@ def test_parse_email():
     )
     email = parse_email(raw_email, EmailProvider.APPLE)
 
-    print('DEBUG -> email:', email)
-    print('DEBUG -> email.message_id:', email.message_id)
 
     assert email.provider == EmailProvider.APPLE
     assert email.message_id == "<123@example.com>"
