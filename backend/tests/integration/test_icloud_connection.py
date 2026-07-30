@@ -7,7 +7,7 @@ from app.mail.providers.icloud import create_icloud_settings
 # if not settings.icloud_username:
 #     @pytest.mark.skip("iCloud credentials not configured")
 
-@pytest.mark.skipif(settings.icloud_username == None, reason="iCloud credentials not configured")
+@pytest.mark.skipif(settings.icloud_username is None, reason="iCloud credentials not configured")
 def test_connect_to_real_icloud():
 
     icloud_settings = create_icloud_settings(
