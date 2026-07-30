@@ -1,29 +1,107 @@
 import pytest
 
 from app.core.config import settings
-from app.mail.imap import connect_imap
+from app.mail.imap import connect_imap, search_messages, fetch_message
+from app.mail.parser import parse_email
+from app.mail.detector import detect_job_email
 from app.mail.providers.icloud import create_icloud_settings
 
-# if not settings.icloud_username:
-#     @pytest.mark.skip("iCloud credentials not configured")
+from app.mail.models import EmailProvider
 
-@pytest.mark.skipif(settings.icloud_username is None, reason="iCloud credentials not configured")
-def test_connect_to_real_icloud():
 
-    icloud_settings = create_icloud_settings(
+@pytest.fixture
+def icloud_connection():
+    settings_obj = create_icloud_settings(
         username=settings.icloud_username,
         password=settings.icloud_password,
     )
+
+    connection = connect_imap(settings_obj)
+
+    yield connection
+
+    try:
+        connection.logout()
+    except Exception:
+        pass
+
     
-    print("icloud_settings:", icloud_settings)
+@pytest.mark.integration
+@pytest.mark.skipif(settings.icloud_username is None, reason="iCloud credentials not configured")
+def test_connect_to_real_icloud(icloud_connection):
 
-    connection = connect_imap(icloud_settings)
 
-    print("Connected!")
+    assert icloud_connection is not None
+    assert icloud_connection.state == "AUTH"
 
-    connection.logout()
 
-    print("Logged out!")
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    settings.icloud_username is None,
+    reason="iCloud credentials not configured",
+)
+
+def test_mailbox_search_after_connection(icloud_connection):
+   
+    ids = search_messages(icloud_connection)
+
+    assert isinstance(ids, list)
+    assert len(ids) > 0
+
+    assert isinstance(ids[0], bytes)
+
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    settings.icloud_username is None,
+    reason="iCloud credentials not configured",
+)
+def test_message_fetch_after_connection(icloud_connection):
+   
+    ids = search_messages(icloud_connection)
+
+    raw_email = fetch_message(icloud_connection, ids[0])
+
+    assert isinstance(raw_email, bytes)
+    assert len(raw_email) > 0
+
+    email = parse_email(
+        raw_email,
+        EmailProvider.ICLOUD,
+    )
+
+    assert email is not None
+    assert email.provider == EmailProvider.ICLOUD
+    assert email.message_id
+    assert email.sender
+    assert email.received_at
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(
+    settings.icloud_username is None,
+    reason="iCloud credentials not configured",
+)
+def test_detect_real_email(icloud_connection):
+   
+    ids = search_messages(icloud_connection)
+
+    raw_email = fetch_message(icloud_connection, ids[0])
+
+    email = parse_email(
+        raw_email,
+        EmailProvider.ICLOUD,
+    )
+
+    result = detect_job_email(email)
+
+    assert result is not None
+    assert isinstance(result.is_job, bool)
+    assert isinstance(result.score, int)
+    
 
 
 

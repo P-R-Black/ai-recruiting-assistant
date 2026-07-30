@@ -19,16 +19,12 @@ def connect_imap(settings: IMAPSettings):
         imaplib.IMAP4.error
             If authentication fails.
     """
-    print('DEBUG connect_imap called')
 
     if settings.use_ssl:
-        print('DEBUG if connect_imap called')
         client = imaplib.IMAP4_SSL(settings.host, settings.port)
     else:
-        print('DEBUG else connect_imap called')
         client = imaplib.IMAP4(settings.host, settings.port)
 
-    print('DEBUG made it to login attempt')
     client.login(settings.username, settings.password)
 
     return client
@@ -68,7 +64,19 @@ def fetch_message(
     Returns the raw RFC 5322 bytes.
     """
 
-    status, data = client.fetch(message_id, "(RFC822)")
+    status, data = client.fetch(message_id, "(BODY[])")
+
+
+    # status, mailbox_info = client.select("INBOX")
+    # print("DEBUG status:", status)
+    # print("DEBUG mailbox_info:", mailbox_info)
+
+    # status, data = client.fetch(message_id, "(RFC822)")
+    # print(client.fetch(message_id, "(FLAGS)"))
+    # print(client.fetch(message_id, "(BODY[])"))
+    # print(client.fetch(message_id, "(RFC822)"))
+
+
 
     if status != "OK":
         raise RuntimeError(f"Failed to fetch message {message_id!r}")
