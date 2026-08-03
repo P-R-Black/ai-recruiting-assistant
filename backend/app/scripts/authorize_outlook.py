@@ -4,7 +4,9 @@ from app.core.config import settings
 import webbrowser
 
 from app.mail.providers.outlook import (
-    create_outlook_client, save_refresh_token, create_outlook_settings)
+    create_outlook_client, save_refresh_token, create_outlook_settings,
+    )
+
 from app.mail.service import OutlookSettings
 
 
@@ -37,11 +39,13 @@ def authorize_outlook(settings: OutlookSettings):
 
 
 def main():
-    settings = create_outlook_settings(
-        application_id=settings.application_id,
-        client_secret=settings.client_secret,
-    )
-    authorize_outlook(settings)
+    settings_obj = create_outlook_settings(
+            application_id=settings.application_id,
+            client_secret=settings.client_secret,
+        )
+    
+    authorize_outlook(settings_obj)
+
 
 if __name__ == "__main__":
     main()
