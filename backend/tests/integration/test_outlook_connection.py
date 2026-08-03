@@ -1,8 +1,9 @@
+from app.core.config import settings
+
 from datetime import datetime, timezone
 
 import pytest
 
-from app.core.config import settings
 from app.mail.models import EmailProvider
 
 # from app.mail.outlook import connect_outlook

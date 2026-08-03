@@ -1,15 +1,12 @@
 import webbrowser
+
 from app.core.config import settings
-
-
 from app.mail.providers.outlook import (
-    create_outlook_client, 
-    save_refresh_token, 
+    create_outlook_client,
     create_outlook_settings,
-    )
-
+    save_refresh_token,
+)
 from app.mail.service import OutlookSettings
-
 
 
 def authorize_outlook(settings: OutlookSettings):
