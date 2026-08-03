@@ -1,6 +1,13 @@
 from sqlalchemy.orm import Session
 
 from app.mail import crud
+from app.mail.providers.outlook import (
+    OutlookSettings,
+    fetch_outlook_messages,
+    graph_headers,
+    normalize_outlook_message,
+    search_folder,
+)
 from app.mail.schemas import EmailCreate
 
 # ----------------------------
@@ -27,3 +34,28 @@ def import_emails(db: Session, emails: list[EmailCreate]):
         imported.append(import_email(db, email))
 
     return imported
+
+
+def import_outlook_messages(
+    db: Session,
+    settings: OutlookSettings,
+    folder_name: str = "Inbox",
+):
+    headers = graph_headers(settings)
+
+    folder = search_folder(headers, folder_name)
+
+    if folder is None:
+        return []
+
+    messages = fetch_outlook_messages(
+        settings=settings,
+        folder_id=folder["id"],
+    )
+
+    emails = [
+        normalize_outlook_message(message)
+        for message in messages
+    ]
+
+    return import_emails(db, emails)

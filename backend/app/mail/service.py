@@ -96,6 +96,14 @@ class IMAPSettings:
     use_ssl: bool = True
 
 
+@dataclass
+class OutlookSettings:
+    application_id: str
+    client_secret: str
+    tenant_id: str
+    authority: str
+    provider: EmailProvider
+
 
 @dataclass
 class JobDetectionResult:
@@ -224,4 +232,8 @@ def get_clean_lines(text: str) -> list[str]:
         for line in text.splitlines()
         if line.strip()
     ]
+
+
+
+
 

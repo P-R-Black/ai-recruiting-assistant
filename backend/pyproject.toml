@@ -12,6 +12,8 @@ dependencies = [
     "alembic",
     "pydantic-settings",
     "python-dotenv",
+    "msal>=1.37.0",
+    "requests>=2.34.2",
 ]
 
 [dependency-groups]
@@ -19,8 +21,7 @@ dev = ["pytest", "httpx", "ruff"]
 
 [tool.ruff]
 line-length = 100
-exclude = ["alembic/versions"]
-
+exclude = ["alembic/versions", ".venv", "venv", "__pycache__", "tests"]
 target-version = "py312"
 
 [tool.ruff.lint]

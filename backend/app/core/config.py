@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     outlook_username: str | None = None
     outlook_password: str | None = None
 
+    application_id: str | None = None
+    client_secret: str | None = None
+
     model_config = SettingsConfigDict(
         env_file=BASE_DIR /".env",
         extra="ignore"
