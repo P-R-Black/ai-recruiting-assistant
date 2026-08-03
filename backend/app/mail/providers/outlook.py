@@ -1,4 +1,3 @@
-import webbrowser
 from pathlib import Path
 
 import httpx
@@ -93,44 +92,24 @@ def save_refresh_token(refresh_token):
 def get_outlook_access_token(
     settings: OutlookSettings,
     scopes: list[str],
-    *,
-    interactive: bool = True,
+    interactive: bool = True
 ):
     """
-    Acquire an Outlook access token.
-
-    If a refresh token exists, it is used automatically.
-    Otherwise, interactive authentication is performed unless
-    interactive=False, in which case a MissingRefreshTokenError
-    is raised.
+    Acquire an Outlook access token using a stored refresh token.
     """
 
     client = create_outlook_client(settings)
 
     refresh_token = load_refresh_token()
 
-    if refresh_token:
-        return client.acquire_token_by_refresh_token(
-            refresh_token,
-            scopes=scopes,
-        )
-
-    if not interactive:
+    if refresh_token is None:
         raise MissingRefreshTokenError(
-            "No Outlook refresh token was found. "
-            "Interactive authentication is disabled."
+            "No Outlook refresh token found. "
+            "Run scripts/authorize_outlook.py first."
         )
 
-    auth_request_url = client.get_authorization_request_url(scopes)
-    webbrowser.open(auth_request_url)
-
-    authorization_code = input("Enter the authorization code: ").strip()
-
-    if not authorization_code:
-        raise ValueError("Authorization code is empty.")
-
-    return client.acquire_token_by_authorization_code(
-        code=authorization_code,
+    return client.acquire_token_by_refresh_token(
+        refresh_token,
         scopes=scopes,
     )
 
