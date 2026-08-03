@@ -7,7 +7,11 @@ import pytest
 from app.core.config import settings
 from app.mail.importer import import_email, import_emails, import_outlook_messages
 from app.mail.models import EmailProvider
-from app.mail.providers.outlook import connect_outlook, create_outlook_settings
+from app.mail.providers.outlook import (
+    connect_outlook, 
+    create_outlook_settings,
+    MissingRefreshTokenError
+)
 
 
 @pytest.fixture
@@ -17,8 +21,22 @@ def outlook_token():
         client_secret=settings.client_secret,
     )
 
-    token = connect_outlook(settings_obj)
-    yield token
+    # token = connect_outlook(settings_obj)
+    # yield token
+
+    try:
+        yield connect_outlook(settings_obj, interactive=False)
+    except MissingRefreshTokenError:
+        pytest.skip("Outlook refresh toke not available")
+
+# def outlook_token():
+#     settings_obj = create_outlook_settings(
+#         application_id=settings.application_id,
+#         client_secret=settings.client_secret,
+#     )
+
+#     token = connect_outlook(settings_obj)
+#     yield token
 
 
 
