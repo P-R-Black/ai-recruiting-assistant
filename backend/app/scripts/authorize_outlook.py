@@ -1,6 +1,5 @@
 from app.core.config import settings
 
-
 import webbrowser
 
 from app.mail.providers.outlook import (
