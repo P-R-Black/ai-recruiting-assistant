@@ -35,13 +35,7 @@ def create_outlook_settings(application_id, client_secret) -> OutlookSettings:
     )
 
 def create_outlook_client(settings: OutlookSettings):
-    import requests
-    import requests.compat
 
-    print("requests:", requests.__file__)
-    print("requests version:", requests.__version__)
-    print("compat:", requests.compat.__file__)
-    print("has JSONDecodeError:", hasattr(requests.compat, "JSONDecodeError"))
     client = msal.ConfidentialClientApplication(
         client_id=settings.application_id,
         client_credential=settings.client_secret,

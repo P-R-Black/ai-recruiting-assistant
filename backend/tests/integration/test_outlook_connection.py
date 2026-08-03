@@ -47,16 +47,17 @@ def test_fetch_outlook_messages(outlook_token):
     # Fetch messages from the inbox
  
     # messages = fetch_outlook_messages(outlook_token, top=5, max_results=5)
-    # print('DEBUG fetched messages:', messages, '\n')
 
     headers = graph_headers(outlook_token)
     folder_name = 'Inbox'
     target_folder = search_folder(headers, folder_name)
-    print('DEBUG target_folder:', target_folder, '\n')
     folder_id = target_folder['id']
-    print('DEBUG folder_id:', folder_id, '\n')
 
     messages = fetch_outlook_messages(outlook_token, folder_id=folder_id, top=5, max_results=5)
+
+    assert messages is not None
+    assert len(messages) > 0
+    
     # for message in messages:
     #     print('Subject:', message['subject'])
     #     print("To:", message['toRecipients'])
@@ -72,8 +73,7 @@ def test_fetch_outlook_messages(outlook_token):
     #     print('-' * 50)
 
 
-    assert messages is not None
-    assert len(messages) > 0
+    
 
 
 def test_normalize_outlook_message():
@@ -103,7 +103,6 @@ def test_normalize_outlook_message():
     }
 
     email = normalize_outlook_message(graph_message)
-    print('DEBUG normalized email:', email, '\n')
 
     assert email.provider == EmailProvider.OUTLOOK
     assert email.message_id == "abc123"
@@ -112,7 +111,8 @@ def test_normalize_outlook_message():
     assert email.recipient == "paul@example.com"
     assert email.raw_body.startswith("Hi Paul")
     assert email.received_at == datetime.strptime(
-        "2026-08-02T03:15:22Z", "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+        "2026-08-02T03:15:22Z", "%Y-%m-%dT%H:%M:%SZ"
+        ).replace(tzinfo=timezone.utc)
 
 
 def test_normalize_outlook_message_missing_fields():
@@ -120,6 +120,7 @@ def test_normalize_outlook_message_missing_fields():
         "id": "abc123",
         "receivedDateTime": "2026-08-02T03:15:22Z",
     }
+    
     email = normalize_outlook_message(graph_message)
 
     assert email.provider == EmailProvider.OUTLOOK
