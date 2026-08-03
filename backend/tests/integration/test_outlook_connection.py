@@ -13,6 +13,7 @@ from app.mail.providers.outlook import (
     graph_headers,
     normalize_outlook_message,
     search_folder,
+    MissingRefreshTokenError
 )
 
 
@@ -23,9 +24,13 @@ def outlook_token():
         client_secret=settings.client_secret,
     )
 
-    token = connect_outlook(settings_obj)
-    yield token
+    # token = connect_outlook(settings_obj)
+    # yield token
 
+    try:
+        yield connect_outlook(settings_obj, interactive=False)
+    except MissingRefreshTokenError:
+        pytest.skip("Outlook refresh toke not available")
 
     
 def test_connect_to_real_outlook(outlook_token):
@@ -120,7 +125,7 @@ def test_normalize_outlook_message_missing_fields():
         "id": "abc123",
         "receivedDateTime": "2026-08-02T03:15:22Z",
     }
-    
+
     email = normalize_outlook_message(graph_message)
 
     assert email.provider == EmailProvider.OUTLOOK

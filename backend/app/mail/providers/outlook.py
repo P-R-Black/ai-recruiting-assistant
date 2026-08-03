@@ -23,6 +23,25 @@ REFRESH_TOKEN_PATH = TOKEN_DIRECTORY / "outlook_refresh_token.txt"
 MS_GRAPH_BASE_URL = "https://graph.microsoft.com/v1.0"
 
 
+class MissingRefreshTokenError(RuntimeError):
+    """
+    Raised when an Outlook refresh token cannot be found.
+
+    This exception indicates that Outlook authentication cannot continue
+    without interactive user authorization. Callers may catch this
+    exception to skip Outlook-related operations in non-interactive
+    environments such as automated tests or CI.
+    """
+
+    def __init__(
+        self,
+        message: str = (
+            "No Outlook refresh token was found. "
+            "Interactive authentication is required."
+        ),
+    ):
+        super().__init__(message)
+
 
 def create_outlook_settings(application_id, client_secret) -> OutlookSettings:
     return OutlookSettings(
@@ -71,50 +90,96 @@ def save_refresh_token(refresh_token):
     REFRESH_TOKEN_PATH.write_text(refresh_token)
 
 
-
-
-def get_outlook_access_token(settings: OutlookSettings, scopes: list[str]):
+def get_outlook_access_token(
+    settings: OutlookSettings,
+    scopes: list[str],
+    *,
+    interactive: bool = True,
+):
     """
-    Get an access token for Microsoft Outlook using the MSAL library.
+    Acquire an Outlook access token.
 
-    Args:
-        application_id (str): The application ID (client ID) of your Azure AD app.
-        client_secret (str): The client secret of your Azure AD app.
-        scopes (list): A list of scopes for which the access token is requested.
-
-    Returns:
-        str: The access token.
+    If a refresh token exists, it is used automatically.
+    Otherwise, interactive authentication is performed unless
+    interactive=False, in which case a MissingRefreshTokenError
+    is raised.
     """
+
     client = create_outlook_client(settings)
 
-    # check if there is a refresh token stored
     refresh_token = load_refresh_token()
 
     if refresh_token:
-        # Try to acquire a new access token using the refresh token
-        token_response = client.acquire_token_by_refresh_token(refresh_token, scopes=scopes)
-    else:
-        # No refresh token, proceed with the authorization code flow
-        auth_request_url = client.get_authorization_request_url(scopes)
-        webbrowser.open(auth_request_url)
-        authorization_code = input("Enter the authorization code: ")
-
-        if not authorization_code:
-            raise ValueError("Authorization code is empty")
-
-        token_response = client.acquire_token_by_authorization_code(
-            code=authorization_code,
-            scopes=scopes
+        return client.acquire_token_by_refresh_token(
+            refresh_token,
+            scopes=scopes,
         )
 
+    if not interactive:
+        raise MissingRefreshTokenError(
+            "No Outlook refresh token was found. "
+            "Interactive authentication is disabled."
+        )
 
-    if "refresh_token" in token_response:
-        save_refresh_token(token_response["refresh_token"])
+    auth_request_url = client.get_authorization_request_url(scopes)
+    webbrowser.open(auth_request_url)
 
-    if 'access_token' in token_response:
-        return token_response['access_token']
-    else:
-        raise Exception('Failed to acquire access token: ' + str(token_response))
+    authorization_code = input("Enter the authorization code: ").strip()
+
+    if not authorization_code:
+        raise ValueError("Authorization code is empty.")
+
+    return client.acquire_token_by_authorization_code(
+        code=authorization_code,
+        scopes=scopes,
+    )
+
+    
+
+# def get_outlook_access_token(settings: OutlookSettings, scopes: list[str]):
+#     """
+#     Get an access token for Microsoft Outlook using the MSAL library.
+
+#     Args:
+#         application_id (str): The application ID (client ID) of your Azure AD app.
+#         client_secret (str): The client secret of your Azure AD app.
+#         scopes (list): A list of scopes for which the access token is requested.
+
+#     Returns:
+#         str: The access token.
+#     """
+#     client = create_outlook_client(settings)
+
+#     # check if there is a refresh token stored
+#     refresh_token = load_refresh_token()
+
+#     if refresh_token:
+#         # Try to acquire a new access token using the refresh token
+#         token_response = client.acquire_token_by_refresh_token(refresh_token, scopes=scopes)
+#     else:
+#         # No refresh token, proceed with the authorization code flow
+#         auth_request_url = client.get_authorization_request_url(scopes)
+#         webbrowser.open(auth_request_url)
+#         authorization_code = input("Enter the authorization code: ")
+
+#         if not authorization_code:
+#             raise ValueError("Authorization code is empty")
+
+#         token_response = client.acquire_token_by_authorization_code(
+#             code=authorization_code,
+#             scopes=scopes
+#         )
+
+
+#     if "refresh_token" in token_response:
+#         save_refresh_token(token_response["refresh_token"])
+
+#     if 'access_token' in token_response:
+#         return token_response['access_token']
+#     else:
+#         raise Exception('Failed to acquire access token: ' + str(token_response))
+
+
 
 
 def graph_headers(access_token: str) -> dict[str, str]:
@@ -123,15 +188,38 @@ def graph_headers(access_token: str) -> dict[str, str]:
     }
 
 
-def connect_outlook(settings: OutlookSettings) -> str:
-    return get_outlook_access_token(
-        settings=settings, 
-        scopes=[
-            "User.Read", 
-            "Mail.ReadWrite", 
-            "Mail.Send",
-            ],
+def connect_outlook(
+        settings: OutlookSettings,
+        *,
+        interactive: bool = True,
+    ) -> str:
+    token_response = get_outlook_access_token(
+        settings=settings,
+        scopes=["User.Read", "Mail.ReadWrite", "Mail.Send"],
+        interactive=interactive,
+    )
+
+    if "refresh_token" in token_response:
+        save_refresh_token(token_response["refresh_token"])
+
+    access_token = token_response.get("access_token")
+
+    if not access_token:
+        raise RuntimeError(
+            f"Failed to acquire Outlook access token: {token_response}"
         )
+
+    return access_token
+
+# def connect_outlook(settings: OutlookSettings) -> str:
+#     return get_outlook_access_token(
+#         settings=settings, 
+        # scopes=[
+        #     "User.Read", 
+        #     "Mail.ReadWrite", 
+        #     "Mail.Send",
+        #     ],
+#         )
     
 
 
