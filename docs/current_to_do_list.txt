@@ -1,11 +1,27 @@
-Milestone 3 — Email Import
-Create an email module (instead of gmail)
-Connect to an IMAP mailbox
-Download messages
-Store raw emails
-Deduplicate
-Parse job emails
-AI extraction
-Create Job records
+1. Improve extraction quality
+✅ Remote / Hybrid / On-site
+✅ Employment type
+✅ Recruiter name
+✅ Company website
+- Better apply URL detection
 
- ✅
+2. Persist extracted jobs
+- Create a Job record from ExtractJob
+- Link the original email to the job
+- Avoid duplicate jobs
+
+3. Confidence scoring for extraction
+- Right now every extracted field is basically 1.0 or 0.0.
+- Eventually every field should carry its own confidence.
+
+4. Classification
+- Interview invitation
+- Application confirmation
+- Rejection
+- Job alert
+- Recruiter outreach
+
+5. AI enrichment
+- Once the deterministic extractor is solid, let AI fill in missing fields.
+
+✅

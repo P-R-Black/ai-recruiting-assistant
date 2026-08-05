@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from app.core.config import settings
-from app.mail.importer import import_email, import_emails, import_outlook_messages
+from app.services.importer import import_email, import_emails, import_outlook_messages
 from app.mail.models import EmailProvider
 from app.mail.providers.outlook import (
     connect_outlook, 
@@ -64,10 +64,10 @@ def test_import_multiple_emails_with_duplicates(db, email_data):
 
 def test_import_outlook_messages(db, email_data, outlook_token):
 
-    with patch("app.mail.importer.graph_headers") as mock_headers, \
-         patch("app.mail.importer.search_folder") as mock_search, \
-         patch("app.mail.importer.fetch_outlook_messages") as mock_fetch, \
-         patch("app.mail.importer.normalize_outlook_message") as mock_normalize:
+    with patch("app.services.importer.graph_headers") as mock_headers, \
+         patch("app.services.importer.search_folder") as mock_search, \
+         patch("app.services.importer.fetch_outlook_messages") as mock_fetch, \
+         patch("app.services.importer.normalize_outlook_message") as mock_normalize:
 
         mock_headers.return_value = {"Authorization": "Bearer token"}
 

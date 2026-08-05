@@ -3,10 +3,15 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from app.mail.imap import connect_imap, fetch_imap_messages, fetch_message, search_messages
+from app.services.imap_connector import (
+    connect_imap, 
+    fetch_imap_messages, 
+    fetch_message, 
+    search_messages
+)
 from app.mail.models import EmailProvider
 from app.mail.schemas import EmailCreate
-from app.mail.service import IMAPSettings
+from app.services.service import IMAPSettings
 
 
 def sample_job_email() -> EmailCreate:
@@ -41,7 +46,7 @@ def test_connect_imap():
         provider=EmailProvider.APPLE
     )
 
-    with patch("app.mail.imap.imaplib.IMAP4_SSL") as mock_client:
+    with patch("app.services.imap_connector.imaplib.IMAP4_SSL") as mock_client:
         instance = MagicMock()
         mock_client.return_value = instance
 
@@ -147,17 +152,17 @@ def test_fetch_imap_messages(monkeypatch, db):
     connection = FakeConnection()
 
     monkeypatch.setattr(
-        "app.mail.imap.connect_imap",
+        "app.services.imap_connector.connect_imap",
         lambda settings: connection,
     )
 
     monkeypatch.setattr(
-        "app.mail.imap.search_messages",
+        "app.services.imap_connector.search_messages",
         lambda conn: [b"1", b"2"],
     )
 
     monkeypatch.setattr(
-        "app.mail.imap.fetch_message",
+        "app.services.imap_connector.fetch_message",
         lambda conn, message_id: b"raw email",
     )
 
@@ -172,7 +177,7 @@ def test_fetch_imap_messages(monkeypatch, db):
     )
 
     monkeypatch.setattr(
-        "app.mail.imap.parse_email",
+        "app.services.imap_connector.parse_email",
         lambda raw, provider: email,
     )
 
@@ -183,7 +188,7 @@ def test_fetch_imap_messages(monkeypatch, db):
         return email
 
     monkeypatch.setattr(
-        "app.mail.imap.import_email",
+        "app.services.imap_connector.import_email",
         fake_import,
     )
 

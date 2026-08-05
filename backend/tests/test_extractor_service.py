@@ -1,15 +1,132 @@
+import pytest
+
 from datetime import datetime, timezone
 
-from app.mail.extractor import (
+from app.services.extractor import (
     extract_apply_url,
     extract_company_name,
     extract_job_information,
     extract_job_title,
     extract_location,
     extract_salary,
+    extract_work_location,
+    extract_employment_type,
+    extract_recruiter_name,
+    extract_company_website,
+    extract_application_url,
+    
 )
-from app.mail.models import EmailProvider
+
+from app.mail.models import EmailProvider, EmploymentType
 from app.mail.schemas import EmailCreate
+from app.services.service import WorkLocation
+
+from tests.conftest import (
+    sample_job_email_complete, 
+    sample_job_email_multi_emails,
+    sample_job_email_no_emails)
+
+
+def sample_job_email() -> EmailCreate:
+    return EmailCreate(
+        provider=EmailProvider.APPLE,
+        message_id="<123@example.com>",
+        subject="Junior Frontend Developer",
+        sender="Talent Team <talent@google.com>",
+        recipient="paul@example.com",
+        received_at=datetime.now(timezone.utc),
+        raw_body="""
+            Junior Frontend Developer
+
+            OpenAI
+
+            Orlando, FL
+
+            Salary: $180,000 - $220,000
+
+            Apply here:
+            https://jobs.openai.com/12345
+            """,
+                )
+
+
+def sample_job_email_two() -> EmailCreate:
+    return EmailCreate(
+        provider=EmailProvider.APPLE,
+        message_id="<123@example.com>",
+        subject="Junior Frontend Developer",
+        sender="Talent Team <talent@google.com>",
+        recipient="paul@example.com",
+        received_at=datetime.now(timezone.utc),
+        raw_body="""
+            Junior Frontend Developer
+
+            OpenAI
+
+            Orlando, FL
+
+            Remote
+
+            Salary: $180,000 - $220,000
+
+            Apply here:
+            https://jobs.openai.com/12345
+            """,
+                )
+
+def sample_job_email_full_time() -> EmailCreate:
+    return EmailCreate(
+        provider=EmailProvider.APPLE,
+        message_id="<123@example.com>",
+        subject="Junior Frontend Developer",
+        sender="Talent Team <talent@google.com>",
+        recipient="paul@example.com",
+        received_at=datetime.now(timezone.utc),
+        raw_body="""
+            Junior Frontend Developer
+
+            OpenAI
+
+            Orlando, FL
+
+            Remote
+
+            Full-time
+
+            Salary: $180,000 - $220,000
+
+            Apply here:
+            https://jobs.openai.com/12345
+            """,
+                )
+
+
+
+def sample_job_email_contractor() -> EmailCreate:
+    return EmailCreate(
+        provider=EmailProvider.APPLE,
+        message_id="<123@example.com>",
+        subject="Junior Frontend Developer",
+        sender="Talent Team <talent@google.com>",
+        recipient="paul@example.com",
+        received_at=datetime.now(timezone.utc),
+        raw_body="""
+            Junior Frontend Developer
+
+            OpenAI
+
+            Orlando, FL
+
+            Remote
+
+            Contractor
+
+            Salary: $180,000 - $220,000
+
+            Apply here:
+            https://jobs.openai.com/12345
+            """,
+                )
 
 
 def test_extract_job_information():
@@ -92,7 +209,7 @@ def test_extract_job_title():
 
     assert result.value == "Junior Frontend Developer"
     assert result.line_index == 0
-    assert result.confidence == 1.0
+    assert result.confidence == pytest.approx(1.0)
 
 
 def test_extract_location():
@@ -146,28 +263,6 @@ def test_extract_company_name():
     assert result.confidence == 1.0
 
 
-def sample_job_email() -> EmailCreate:
-    return EmailCreate(
-        provider=EmailProvider.APPLE,
-        message_id="<123@example.com>",
-        subject="Junior Frontend Developer",
-        sender="Talent Team <talent@google.com>",
-        recipient="paul@example.com",
-        received_at=datetime.now(timezone.utc),
-        raw_body="""
-            Junior Frontend Developer
-
-            OpenAI
-
-            Orlando, FL
-
-            Salary: $180,000 - $220,000
-
-            Apply here:
-            https://jobs.openai.com/12345
-            """,
-                )
-
 def test_extract_apply_url():
     email = sample_job_email()
 
@@ -175,6 +270,173 @@ def test_extract_apply_url():
 
     assert result == "https://jobs.openai.com/12345"
 
+
+
+def test_extract_work_location():
+    email = sample_job_email_two()
+    
+    searchable = " ".join([
+        email.subject,
+        email.raw_body,
+    ])
+
+    result = extract_work_location(searchable)
+
+    assert result.value == WorkLocation.REMOTE
+    assert result.confidence == pytest.approx(1.0)
+    assert result.line_index == 3
+
+
+def test_extract_work_location_search_unknown():
+    email = sample_job_email()
+    
+    searchable = " ".join([
+        email.subject,
+        email.raw_body,
+    ])
+
+    result = extract_work_location(searchable)
+
+    assert result.value == WorkLocation.UNKNOWN
+    assert result.confidence == pytest.approx(0.0)
+    assert result.line_index == None
+
+
+def test_extract_work_location_remote():
+    result = extract_work_location(
+        "This position is fully remote."
+    )
+
+    assert result.value == WorkLocation.REMOTE
+    assert result.confidence == pytest.approx(1.0)
+
+
+def test_extract_work_location_hybrid():
+    result = extract_work_location(
+        "This is a hybrid position."
+    )
+
+    assert result.value == WorkLocation.HYBRID
+
+
+def test_extract_work_location_onsite():
+    result = extract_work_location(
+        "This role is onsite."
+    )
+
+    assert result.value == WorkLocation.ONSITE
+
+
+def test_extract_work_location_unknown():
+    result = extract_work_location(
+        "Junior Frontend Developer"
+    )
+
+    assert result.value == WorkLocation.UNKNOWN
+    assert result.confidence == pytest.approx(0.0)
+
+
+
+def test_extract_employment_type():
+    email = sample_job_email_full_time()
+    
+    searchable = " ".join([
+        email.subject,
+        email.raw_body,
+    ])
+
+    result = extract_employment_type(searchable)
+
+    assert result.value == EmploymentType.FULL_TIME
+    assert result.confidence == pytest.approx(1.0)
+
+
+def test_extract_employment_type_contractor():
+    email = sample_job_email_contractor()
+    
+    searchable = " ".join([
+        email.subject,
+        email.raw_body,
+    ])
+
+    result = extract_employment_type(searchable)
+
+    assert result.value == EmploymentType.CONTRACT
+    assert result.confidence == pytest.approx(1.0)
+
+
+def test_extract_employment_type_unknown():
+    email = sample_job_email()
+    
+    searchable = " ".join([
+        email.subject,
+        email.raw_body,
+    ])
+
+    result = extract_employment_type(searchable)
+
+    assert result.value == EmploymentType.UNKNOWN
+    assert result.confidence == pytest.approx(0.0)
+
+
+
+
+def test_extract_recruiter_name():
+    email = sample_job_email_complete()
+        
+    searchable = " ".join([
+        email.subject,
+        email.raw_body,
+    ])
+
+    result = extract_recruiter_name(searchable)
+
+    assert result.value == 'Jane Smith'
+    assert result.confidence == pytest.approx(1.0)
+    assert result.line_index == 7
+
+
+
+def test_extract_company_website():
+    email = sample_job_email_complete()
+            
+    searchable = " ".join([
+        email.subject,
+        email.raw_body,
+    ])
+
+
+    title = extract_job_title(searchable)
+    company = extract_company_name(searchable, title)
+    apply_url = extract_apply_url(email)
+    result = extract_company_website(company.value, apply_url)
+
+    assert result.value == "openai.com"
+    assert result.confidence == pytest.approx(0.95)
+
+
+def test_extract_application_single_url():
+    email = sample_job_email()
+    
+    result = extract_application_url(email)
+    
+    assert result.value == "https://jobs.openai.com/12345"
+
+ 
+def test_extract_application_url():
+    email = sample_job_email_multi_emails()
+    
+    result = extract_application_url(email)
+    
+    assert result.value == "https://careers.google.com/12345"
+
+
+
+def test_extract_application_no_urls():
+    email = sample_job_email_no_emails()
+    result = extract_application_url(email)
+        
+    assert result.value == None
 
 """
 Run individual tests

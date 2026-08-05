@@ -6,7 +6,7 @@ from app.mail.providers.outlook import (
     create_outlook_settings,
     save_refresh_token,
 )
-from app.mail.service import OutlookSettings
+from app.services.service import OutlookSettings
 
 
 def authorize_outlook(settings: OutlookSettings):

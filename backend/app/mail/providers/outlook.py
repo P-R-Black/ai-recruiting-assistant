@@ -6,7 +6,7 @@ import msal
 from app.core.config import BASE_DIR
 from app.mail.models import EmailProvider
 from app.mail.schemas import EmailCreate
-from app.mail.service import OutlookSettings
+from app.services.service import OutlookSettings
 
 # ----------------------------
 # Outlook API
@@ -92,6 +92,7 @@ def save_refresh_token(refresh_token):
 def get_outlook_access_token(
     settings: OutlookSettings,
     scopes: list[str],
+    *,
     interactive: bool = True
 ):
     """

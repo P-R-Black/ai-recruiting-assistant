@@ -3,10 +3,10 @@ from unittest.mock import MagicMock, call, patch
 import pytest
 
 from app.mail.models import EmailProvider
-from app.mail.sync import fetch_messages, normalize_message, sync_all_providers, sync_provider
+from app.services.sync import fetch_messages, normalize_message, sync_all_providers, sync_provider
 
 
-@patch("app.mail.sync.fetch_icloud_messages")
+@patch("app.services.sync.fetch_icloud_messages")
 def test_fetch_messages_icloud(mock_fetch):
     settings = MagicMock()
 
@@ -61,9 +61,9 @@ def test_normalize_icloud():
     assert result is email
 
 
-@patch("app.mail.sync.import_emails")
-@patch("app.mail.sync.normalize_message")
-@patch("app.mail.sync.fetch_messages")
+@patch("app.services.sync.import_emails")
+@patch("app.services.sync.normalize_message")
+@patch("app.services.sync.fetch_messages")
 def test_sync_provider(
     mock_fetch,
     mock_normalize,
@@ -93,7 +93,7 @@ def test_sync_provider(
     ]
     mock_import.assert_called_once_with(db, ["email1", "email2"])
 
-@patch("app.mail.sync.fetch_outlook_messages")
+@patch("app.services.sync.fetch_outlook_messages")
 def test_fetch_messages_outlook(mock_fetch):
     settings = MagicMock()
 
@@ -118,7 +118,7 @@ def test_normalize_unknown_provider():
         )
 
 
-@patch("app.mail.sync.sync_provider")
+@patch("app.services.sync.sync_provider")
 def test_sync_all_providers(mock_sync):
 
     db = MagicMock()

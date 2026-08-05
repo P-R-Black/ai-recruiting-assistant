@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from app.mail.detector import (
+from app.services.detector import (
     calculate_job_board_sender_score,
     calculate_job_keyword_score,
     calculate_recruiter_sender_score,
@@ -10,7 +10,7 @@ from app.mail.detector import (
 )
 from app.mail.models import EmailProvider
 from app.mail.schemas import EmailCreate
-from app.mail.service import JOB_EMAIL_THRESHOLD
+from app.constants.keyword_list import JOB_EMAIL_THRESHOLD
 
 
 def sample_job_email() -> EmailCreate:

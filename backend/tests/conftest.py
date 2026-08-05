@@ -1,5 +1,4 @@
-from datetime import UTC, datetime
-
+from datetime import UTC, datetime, timezone
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
@@ -86,3 +85,100 @@ def email_data():
         received_at=datetime.now(UTC),
         raw_body="This is a sample job email"
     )
+
+
+
+def sample_job_email_complete() -> EmailCreate:
+    return EmailCreate(
+        provider=EmailProvider.APPLE,
+        message_id="<123@example.com>",
+        subject="Junior Frontend Developer",
+        sender="Talent Team <talent@google.com>",
+        recipient="paul@example.com",
+        received_at=datetime.now(timezone.utc),
+        raw_body="""
+            Junior Frontend Developer
+
+            OpenAI
+
+            Orlando, FL
+
+            Salary: $180,000 - $220,000
+
+            Remote
+
+            Apply here:
+            https://jobs.openai.com/12345
+
+            Jane Smith
+            
+            Senior Recruiter
+
+            OpenAI
+            """,
+                )
+
+def sample_job_email_multi_emails() -> EmailCreate:
+    return EmailCreate(
+        provider=EmailProvider.APPLE,
+        message_id="<123@example.com>",
+        subject="Junior Frontend Developer",
+        sender="Talent Team <talent@google.com>",
+        recipient="paul@example.com",
+        received_at=datetime.now(timezone.utc),
+        raw_body="""
+            Junior Frontend Developer
+
+            OpenAI
+
+            Orlando, FL
+
+            Salary: $180,000 - $220,000
+
+            Remote
+
+            View in browswer:
+            https://email.linkedin.com/12345
+
+            Apply here:
+            https://careers.google.com/12345
+
+            Jane Smith
+            
+            Senior Recruiter
+
+            OpenAI
+
+            Unsubscribe here:
+            https://email.linkedin.com/unsubscribe
+            
+            """,
+                )
+
+def sample_job_email_no_emails() -> EmailCreate:
+    return EmailCreate(
+        provider=EmailProvider.APPLE,
+        message_id="<123@example.com>",
+        subject="Junior Frontend Developer",
+        sender="Talent Team <talent@google.com>",
+        recipient="paul@example.com",
+        received_at=datetime.now(timezone.utc),
+        raw_body="""
+            Junior Frontend Developer
+
+            OpenAI
+
+            Orlando, FL
+
+            Salary: $180,000 - $220,000
+
+            Remote
+
+            Jane Smith
+            
+            Senior Recruiter
+
+            OpenAI
+            
+            """,
+                )

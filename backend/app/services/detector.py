@@ -1,7 +1,6 @@
 from email.utils import parseaddr
 
-from app.mail.schemas import EmailCreate
-from app.mail.service import (
+from app.constants.keyword_list import (
     FREE_EMAIL_PROVIDERS,
     JOB_BOARD_DOMAINS,
     JOB_EMAIL_THRESHOLD,
@@ -9,6 +8,9 @@ from app.mail.service import (
     RECRUITER_KEYWORDS,
     REJECTION_KEYWORDS,
     UNSUBSCRIBE_KEYWORDS,
+)
+from app.mail.schemas import EmailCreate
+from app.services.service import (
     JobDetectionResult,
 )
 

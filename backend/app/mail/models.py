@@ -21,6 +21,34 @@ class EmailProvider(str, enum.Enum):
     OTHER = "other"
 
 
+
+class JobEmailType(str, enum.Enum):
+    APPLICATION = "application"
+    INTERVIEW = "interview"
+    REJECTION = "rejection"
+    JOB_ALERT = "job_alert"
+    RECRUITER_OUTREACH = "recruiter_outreach"
+    UNKNOWN = "unknown"
+
+
+class WorkLocation(str, enum.Enum):
+    REMOTE = "remote"
+    HYBRID = "hybrid"
+    ONSITE = "onsite"
+    UNKNOWN = "unknown"
+
+
+class EmploymentType(str, Enum):
+    FULL_TIME = "full_time"
+    PART_TIME = "part_time"
+    CONTRACT = "contract"
+    TEMPORARY = "temporary"
+    INTERN = "intern"
+    FREELANCE = "freelance"
+    UNKNOWN = "unknown"
+
+    
+
 class Email(Base):
 
     __tablename__ = "emails"

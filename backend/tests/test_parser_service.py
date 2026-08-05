@@ -2,7 +2,7 @@
 from email.message import EmailMessage
 
 from app.mail.models import EmailProvider
-from app.mail.parser import extract_html, extract_message_body, extract_plain_text, parse_email
+from app.services.parser import (extract_html, extract_message_body, extract_plain_text, parse_email)
 
 
 def test_parse_email():

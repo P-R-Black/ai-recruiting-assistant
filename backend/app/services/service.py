@@ -1,89 +1,14 @@
-import re
 from dataclasses import dataclass, field
+from typing import Any
 
-from app.mail.models import EmailProvider
-
-JOB_KEYWORDS = [
-    "job",
-    "position",
-    "opportunity",
-    "career",
-    "application",
-    "interview",
-    "recruiter",
-    "hiring",
-]
-
-FREE_EMAIL_PROVIDERS = [
-    "gmail.com",
-    "hotmail.com",
-    "outlook.com",
-    "icloud.com",
-    "me.com",
-    "yahoo.com",
-    "aol.com",
-]
-
-RECRUITER_KEYWORDS = [
-    "recruit",
-    "recruiter",
-    "talent",
-    "career",
-    "careers",
-    "hiring",
-    "jobs",
-    "staffing",
-    "hr",
-    "humanresources",
-]
-
-JOB_BOARD_DOMAINS = {
-    "linkedin.com": 5,
-    "indeed.com": 5,
-    "glassdoor.com": 5,
-    "greenhouse.io": 4,
-    "lever.co": 4,
-    "ashbyhq.com": 4,
-    "workday.com": 3,
-}
-
-
-SALARY_KEYWORDS = [
-    "salary",
-    "$",
-    "usd",
-    "per year",
-    "/year",
-    "annual",
-    "compensation",
-]
-
-REJECTION_KEYWORDS = [
-    "unfortunately",
-    "we regret",
-    "not moving forward",
-    "another candidate",
-    "other candidates",
-    "position has been filled",
-    "thank you for your interest",
-    "we appreciate your interest",
-    "we have decided",
-    "we will not",
-    "declined",
-]
-
-UNSUBSCRIBE_KEYWORDS = [
-    "unsubscribe",
-    "manage preferences",
-    "email preferences",
-    "stop receiving",
-    "opt out",
-]
-
-
-JOB_EMAIL_THRESHOLD = 3
-URL_PATTERN = re.compile(r"https?://\S+")
-
+from app.constants.keyword_list import (
+    SALARY_KEYWORDS, 
+    RECRUITER_TITLE_KEYWORDS, 
+    NON_PERSON_WORDS,
+    APPLY_URL_KEYWORDS,
+    NON_APPLY_URL_KEYWORDS
+    )
+from app.mail.models import EmailProvider, WorkLocation
 
 
 @dataclass
@@ -123,12 +48,16 @@ class ExtractJob:
     location: str | None
     salary: str | None
     apply_url: str | None
+    remote: bool = False
+    employment_type: str | None = None
+    recruiter: str | None = None
+    work_location: WorkLocation = WorkLocation.UNKNOWN
 
 
 @dataclass
 class ExtractedValue:
-    value: str | None
     line_index: int | None
+    value: Any = None # str | None
     confidence: float = 1.0
 
 
@@ -155,6 +84,16 @@ def looks_like_job_title(text: str) -> str | None:
         return False
 
     return True
+
+
+
+def looks_like_recruiter_title(text: str) -> bool:
+    if not text: 
+            return False
+    
+    text = text.lower()
+
+    return any(keyword in text for keyword in RECRUITER_TITLE_KEYWORDS)
 
 
 def clean_extracted_job_title(text: str) -> str | None:
@@ -224,6 +163,40 @@ def looks_like_salary(text: str) -> str | None:
 
 
     return any(keyword in text for keyword in SALARY_KEYWORDS)
+
+
+
+def looks_like_person_name(text: str) -> bool:
+    words =  text.strip().split()
+
+    if not (2 <= len(words) <= 4):
+        return False
+
+    for word in words:
+        if not word[0].isupper():
+            return False
+
+        if any(char.isdigit() for char in word):
+            return False
+
+        if word.lower() in NON_PERSON_WORDS:
+            return False
+
+    return True
+
+
+def calculate_apply_url_score(url: str) -> int:
+    score = 0
+
+    for word in APPLY_URL_KEYWORDS:
+        if word in url.lower():
+            score += 2
+
+    for word in NON_APPLY_URL_KEYWORDS:
+        if word in url.lower():
+            score -= 2
+
+    return score    
 
 
 def get_clean_lines(text: str) -> list[str]:
