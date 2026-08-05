@@ -6,31 +6,27 @@ from app.constants.keyword_list import (
     FULL_TIME_KEYWORDS,
     HYBRID_KEYWORDS,
     INTERNSHIP_KEYWORDS,
+    JOB_SITE_PREFIXES,
     ONSITE_KEYWORDS,
     PART_TIME_KEYWORDS,
     REMOTE_KEYWORDS,
     TEMPORARY_KEYWORDS,
     URL_PATTERN,
-    JOB_SITE_PREFIXES,
-    APPLY_URL_KEYWORDS,
-    NON_APPLY_URL_KEYWORDS
 )
-
-
 from app.mail.models import EmploymentType, WorkLocation
 from app.mail.schemas import EmailCreate
 from app.services.service import (
     ExtractedValue,
     ExtractJob,
+    calculate_apply_url_score,
     clean_extracted_job_title,
     get_clean_lines,
     looks_like_company_name,
     looks_like_job_title,
-    looks_like_location_name, 
-    looks_like_salary,
-    looks_like_recruiter_title,
+    looks_like_location_name,
     looks_like_person_name,
-    calculate_apply_url_score
+    looks_like_recruiter_title,
+    looks_like_salary,
 )
 
 

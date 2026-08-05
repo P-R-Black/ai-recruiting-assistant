@@ -2,12 +2,12 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from app.constants.keyword_list import (
-    SALARY_KEYWORDS, 
-    RECRUITER_TITLE_KEYWORDS, 
-    NON_PERSON_WORDS,
     APPLY_URL_KEYWORDS,
-    NON_APPLY_URL_KEYWORDS
-    )
+    NON_APPLY_URL_KEYWORDS,
+    NON_PERSON_WORDS,
+    RECRUITER_TITLE_KEYWORDS,
+    SALARY_KEYWORDS,
+)
 from app.mail.models import EmailProvider, WorkLocation
 
 
