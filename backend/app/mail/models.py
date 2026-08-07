@@ -4,12 +4,16 @@ from __future__ import annotations
 import enum
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, Enum, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+
+if TYPE_CHECKING:
+    from app.jobs.models import Job
 
 
 class EmailProvider(str, enum.Enum):
@@ -38,7 +42,7 @@ class WorkLocation(str, enum.Enum):
     UNKNOWN = "unknown"
 
 
-class EmploymentType(str, Enum):
+class EmploymentType(str, enum.Enum):
     FULL_TIME = "full_time"
     PART_TIME = "part_time"
     CONTRACT = "contract"
@@ -108,5 +112,11 @@ class Email(Base):
         Boolean, 
         default=False,
         nullable=False
+    )
+
+    job: Mapped["Job | None"] = relationship(
+        "Job",
+        back_populates="email",
+        uselist=False,
     )
 

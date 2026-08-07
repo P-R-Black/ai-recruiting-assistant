@@ -1,11 +1,12 @@
 from uuid import UUID
 
 from app.jobs.models import Job
-    
+from app.mail.models import EmploymentType    
 
 def test_create_job_endpoint(client, db, job_payload):
 
     response = client.post("/jobs/", json=job_payload)
+    print('DEBUG test_create_job_endpoint response.json', response.json())
 
     assert response.status_code == 201
 

@@ -9,11 +9,11 @@ dependencies = [
     "uvicorn[standard]",
     "sqlalchemy",
     "psycopg[binary]",
-    "alembic",
     "pydantic-settings",
     "python-dotenv",
     "msal>=1.37.0",
     "requests>=2.34.2",
+    "alembic>=1.19.0",
 ]
 
 [dependency-groups]

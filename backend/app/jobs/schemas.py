@@ -7,11 +7,12 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
 
 from app.jobs.models import JobSource, JobStatus
+from app.mail.models import EmploymentType, WorkLocation
 
 Title = Annotated[str, Field(min_length=1, max_length=255)]
 Company = Annotated[str, Field(min_length=1, max_length=255)]
 Location = Annotated[str | None, Field(max_length=255)]
-EmploymentType = Annotated[str | None, Field(max_length=100)]
+# EmploymentType = Annotated[str | None, Field(max_length=100)]
 RemoteType = Annotated[str | None, Field(max_length=100)]
 Salary = Annotated[int | None, Field(ge=0)]
 Currency = Annotated[str | None, Field(max_length=10)]
@@ -23,8 +24,11 @@ class JobBase(BaseModel):
     title: Title
     company: Company
     location: Location = None
-    employment_type: EmploymentType = None
-    remote_type: RemoteType = None
+
+    employment_type: EmploymentType | None = None
+    work_location: WorkLocation | None = None
+
+    recruiter_name: str | None = None
 
     salary_min: Salary = None
     salary_max: Salary = None
@@ -33,6 +37,8 @@ class JobBase(BaseModel):
     description: Description
     job_url: JobUrl
     source: JobSource
+
+    email_id: UUID | None = None
 
     model_config = ConfigDict(
         extra="forbid",
@@ -59,8 +65,12 @@ class JobUpdate(BaseModel):
     title: Title | None = None
     company: Company | None = None
     location: Location = None
-    employment_type: EmploymentType = None
-    remote_type: RemoteType = None
+
+    employment_type: EmploymentType | None = None
+    work_location: WorkLocation | None = None
+    recruiter_name: str | None = None
+
+    email_id: UUID | None = None
 
     salary_min: Salary = None
     salary_max: Salary = None

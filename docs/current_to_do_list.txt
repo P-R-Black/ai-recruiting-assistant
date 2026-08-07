@@ -3,7 +3,7 @@
 ✅ Employment type
 ✅ Recruiter name
 ✅ Company website
-- Better apply URL detection
+✅ Better apply URL detection
 
 2. Persist extracted jobs
 - Create a Job record from ExtractJob

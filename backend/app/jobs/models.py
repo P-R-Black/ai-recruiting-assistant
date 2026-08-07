@@ -3,12 +3,17 @@ from __future__ import annotations
 import enum
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, Enum, Integer, String, Text, func
+from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+from app.mail.models import EmploymentType, WorkLocation
+
+if TYPE_CHECKING:
+    from app.mail.models import Email
 
 
 class JobStatus(str, enum.Enum):
@@ -51,12 +56,21 @@ class Job(Base):
         String(255),
     )
 
-    employment_type: Mapped[str | None] = mapped_column(
-        String(100),
+    employment_type: Mapped[EmploymentType | None] = mapped_column(
+        Enum(EmploymentType,
+            values_callable=lambda enum_cls: [member.value for member in enum_cls],
+            ),
     )
 
-    remote_type: Mapped[str | None] = mapped_column(
-        String(100),
+    work_location: Mapped[WorkLocation | None] = mapped_column(
+        Enum(
+            WorkLocation,
+            values_callable=lambda enum_cls: [member.value for member in enum_cls], 
+            ),
+    )
+
+    recruiter_name: Mapped[str | None] = mapped_column(
+        String(255),
     )
 
     salary_min: Mapped[int | None] = mapped_column(
@@ -92,6 +106,17 @@ class Job(Base):
         default=JobStatus.NEW,
         nullable=False,
     )
+
+    email_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("emails.id"),
+        unique=True
+    )
+
+    email: Mapped["Email"] = relationship(
+        "Email",
+        back_populates="job"
+    )
+
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

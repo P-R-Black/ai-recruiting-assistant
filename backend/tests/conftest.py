@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.jobs.models import Job
 from app.jobs.schemas import JobCreate
-from app.mail.models import EmailProvider
+from app.mail.models import EmailProvider, EmploymentType, WorkLocation
 from app.mail.schemas import EmailCreate
 from app.main import app
 
@@ -22,8 +22,8 @@ def job_data() -> JobCreate:
         title="Senior Python Developer",
         company="OpenAI",
         location="Remote",
-        employment_type="Full-time",
-        remote_type="Remote",
+        employment_type=EmploymentType.FULL_TIME,
+        work_location=WorkLocation.REMOTE,
         salary_min=150000,
         salary_max=200000,
         salary_currency="USD",
@@ -38,8 +38,8 @@ def job_payload():
         "title": "Senior Python Developer",
         "company": "OpenAI",
         "location": "Remote",
-        "employment_type": "Full-time",
-        "remote_type": "Remote",
+        "employment_type": EmploymentType.FULL_TIME.value,
+        "work_location": WorkLocation.REMOTE.value,
         "salary_min": 150000,
         "salary_max": 200000,
         "salary_currency": "USD",
