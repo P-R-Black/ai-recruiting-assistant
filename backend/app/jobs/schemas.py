@@ -12,7 +12,6 @@ from app.mail.models import EmploymentType, WorkLocation
 Title = Annotated[str, Field(min_length=1, max_length=255)]
 Company = Annotated[str, Field(min_length=1, max_length=255)]
 Location = Annotated[str | None, Field(max_length=255)]
-# EmploymentType = Annotated[str | None, Field(max_length=100)]
 RemoteType = Annotated[str | None, Field(max_length=100)]
 Salary = Annotated[int | None, Field(ge=0)]
 Currency = Annotated[str | None, Field(max_length=10)]
@@ -39,6 +38,7 @@ class JobBase(BaseModel):
     source: JobSource
 
     email_id: UUID | None = None
+    fingerprint: str
 
     model_config = ConfigDict(
         extra="forbid",
@@ -80,6 +80,7 @@ class JobUpdate(BaseModel):
     job_url: JobUrl | None = None
     source: JobSource | None = None
 
+    
     model_config = ConfigDict(
         extra="forbid",
         str_strip_whitespace=True,
@@ -101,7 +102,41 @@ class JobUpdate(BaseModel):
 
 class JobStatusUpdate(BaseModel):
     status: JobStatus
+
+
+class JobResponse(JobBase):
+    id: UUID
+    status: JobStatus
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+# A pydantic model for AI/Extraction Results
+class JobExtraction(BaseModel):
+    title: Title | None = None
+    company: Company | None = None
+    location: Location | None = None
+
+    employment_type: EmploymentType = EmploymentType.UNKNOWN
+    work_location: WorkLocation = WorkLocation.UNKNOWN
+
+    recruiter_name: str| None = None
     
+    salary_min: Salary = None
+    salary_max: Salary = None
+    salary_currency: Currency = None
+    
+    description: Description | None = None
+    job_url: JobUrl | None = None
+
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+    
+
 # Update to use later
 # class JobFilter(BaseModel):
 #     skip: int = 0
@@ -117,10 +152,3 @@ class JobStatusUpdate(BaseModel):
 #     salary_currency: Currency | None = None
 
 
-class JobResponse(JobBase):
-    id: UUID
-    status: JobStatus
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = ConfigDict(from_attributes=True)

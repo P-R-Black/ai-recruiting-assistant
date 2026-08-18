@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.jobs.models import Job, JobSource, JobStatus
 from app.jobs.schemas import JobCreate, JobUpdate
+from app.mail.mail_services.service import WorkLocation
 
 
 def create_job(db: Session, job: JobCreate) -> Job:
@@ -34,7 +35,8 @@ def list_jobs(
         company: str | None = None,
         location: str | None = None,
         employment_type: str | None = None,
-        remote_type: str | None = None,
+        # remote_type: str | None = None,
+        work_location: WorkLocation | None = None,
         salary_min: int | None = None,
         salary_max: int | None = None,
         salary_currency: str | None = None,
@@ -51,8 +53,10 @@ def list_jobs(
         query = query.filter(Job.location.ilike(f"%{location}%"))
     if employment_type is not None:
         query = query.filter(Job.employment_type.ilike(f"%{employment_type}%"))
-    if remote_type is not None:
-        query = query.filter(Job.remote_type.ilike(f"%{remote_type}%"))
+    # if remote_type is not None:
+    #     query = query.filter(Job.remote_type.ilike(f"%{remote_type}%"))
+    if work_location is not None:
+        query = query.filter(Job.work_location == work_location)
     if salary_min is not None:
         query = query.filter(Job.salary_min >= salary_min)
     if salary_max is not None:

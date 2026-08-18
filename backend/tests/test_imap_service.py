@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from app.services.imap_connector import (
+from app.mail.connectors.imap_connector import (
     connect_imap, 
     fetch_imap_messages, 
     fetch_message, 
@@ -11,7 +11,7 @@ from app.services.imap_connector import (
 )
 from app.mail.models import EmailProvider
 from app.mail.schemas import EmailCreate
-from app.services.service import IMAPSettings
+from app.mail.mail_services.service import IMAPSettings
 
 
 def sample_job_email() -> EmailCreate:
@@ -46,7 +46,7 @@ def test_connect_imap():
         provider=EmailProvider.APPLE
     )
 
-    with patch("app.services.imap_connector.imaplib.IMAP4_SSL") as mock_client:
+    with patch("app.mail.mail_services.imap_connector.imaplib.IMAP4_SSL") as mock_client:
         instance = MagicMock()
         mock_client.return_value = instance
 
@@ -152,17 +152,17 @@ def test_fetch_imap_messages(monkeypatch, db):
     connection = FakeConnection()
 
     monkeypatch.setattr(
-        "app.services.imap_connector.connect_imap",
+        "app.mail.mail_services.imap_connector.connect_imap",
         lambda settings: connection,
     )
 
     monkeypatch.setattr(
-        "app.services.imap_connector.search_messages",
+        "app.mail.mail_services.imap_connector.search_messages",
         lambda conn: [b"1", b"2"],
     )
 
     monkeypatch.setattr(
-        "app.services.imap_connector.fetch_message",
+        "app.mail.mail_services.imap_connector.fetch_message",
         lambda conn, message_id: b"raw email",
     )
 
@@ -177,7 +177,7 @@ def test_fetch_imap_messages(monkeypatch, db):
     )
 
     monkeypatch.setattr(
-        "app.services.imap_connector.parse_email",
+        "app.mail.mail_services.imap_connector.parse_email",
         lambda raw, provider: email,
     )
 
@@ -188,7 +188,7 @@ def test_fetch_imap_messages(monkeypatch, db):
         return email
 
     monkeypatch.setattr(
-        "app.services.imap_connector.import_email",
+        "app.mail.mail_services.imap_connector.import_email",
         fake_import,
     )
 

@@ -2,7 +2,7 @@ import pytest
 
 from datetime import datetime, timezone
 
-from app.services.extractor import (
+from app.mail.mail_services.extractor import (
     extract_apply_url,
     extract_company_name,
     extract_job_information,
@@ -19,7 +19,8 @@ from app.services.extractor import (
 
 from app.mail.models import EmailProvider, EmploymentType
 from app.mail.schemas import EmailCreate
-from app.services.service import WorkLocation
+from app.mail.mail_services.service import WorkLocation
+from app.mail.mail_services.service import parse_salary
 
 from tests.conftest import (
     sample_job_email_complete, 
@@ -247,6 +248,50 @@ def test_extract_salary():
     assert result.confidence == 1.0
 
 
+def test_salary_parser():
+    email = sample_job_email()
+    
+    searchable = " ".join([
+            email.subject,
+            email.raw_body,
+        ])
+    
+    title = extract_job_title(searchable)
+    company = extract_company_name(searchable, title)
+    location = extract_location(searchable, company)
+    result = extract_salary(searchable, location)
+    salary_range = parse_salary(result.value)
+
+    assert salary_range.salary_min == 180000
+    assert salary_range.salary_max == 220000
+    assert salary_range.currency == 'USD'
+
+
+
+def test_parse_single_salary():
+    result = parse_salary("Salary: $180,000")
+
+    assert result.salary_min == 180000
+    assert result.salary_max is None
+    assert result.currency == "USD"
+
+
+def test_parse_euro_salary():
+    result = parse_salary("€80,000 - €100,000")
+
+    assert result.salary_min == 80000
+    assert result.salary_max == 100000
+    assert result.currency == "EUR"
+
+
+def test_parse_pound_salary():
+    result = parse_salary("£60,000")
+
+    assert result.salary_min == 60000
+    assert result.salary_max is None
+    assert result.currency == "GBP"
+
+
 def test_extract_company_name():
     email = sample_job_email()
 
@@ -444,5 +489,5 @@ uv run pytest tests/test_jobs_api.py
 make test TEST=tests/test_jobs_api.py
 uv run pytest -s (to show print statements for passing tests)
 uv run pytest -s tests/test_jobs_api.py (to show print statements for passing tests)
-uv run pytest tests/test_mail_service.py::test_detect_job_email_true (to run specific test)
+uv run pytest tests/test_extractor_service.py::test_extract_job_information (to run specific test)
 """

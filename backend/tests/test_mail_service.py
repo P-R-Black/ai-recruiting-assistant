@@ -46,19 +46,6 @@ All Test
 38. test_detect_job_email_empy
 39. test_threshold_job_threshold
 
-48.
-49.
-50.
-51.
-52.
-53.
-54.
-55.
-56.
-57.
-58.
-59.
-60.
 """
 
 def sample_job_email() -> EmailCreate:

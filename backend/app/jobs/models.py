@@ -33,6 +33,15 @@ class JobSource(str, enum.Enum):
     MANUAL = "manual"
 
 
+class JobBoard(str, enum.Enum):
+    GLASSDOOR = "glassdoor"
+    INDEED = "indeed"
+    ZIPRECRUITER = "ziprecruiter"
+    LINKEDIN = "linkedin"
+    DICE = "dice"
+    UNKNOWN = "unknown"
+
+
 class Job(Base):
     __tablename__ = "jobs"
 
@@ -115,6 +124,13 @@ class Job(Base):
     email: Mapped["Email"] = relationship(
         "Email",
         back_populates="job"
+    )
+
+    fingerprint: Mapped[str] = mapped_column(
+        String(64),
+        unique=True,
+        index=True,
+        nullable=False,
     )
 
 

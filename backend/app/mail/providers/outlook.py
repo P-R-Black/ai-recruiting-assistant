@@ -4,9 +4,9 @@ import httpx
 import msal
 
 from app.core.config import BASE_DIR
+from app.mail.mail_services.service import OutlookSettings
 from app.mail.models import EmailProvider
 from app.mail.schemas import EmailCreate
-from app.services.service import OutlookSettings
 
 # ----------------------------
 # Outlook API

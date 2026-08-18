@@ -9,10 +9,11 @@ from app.constants.keyword_list import (
     REJECTION_KEYWORDS,
     UNSUBSCRIBE_KEYWORDS,
 )
-from app.mail.schemas import EmailCreate
-from app.services.service import (
+
+from app.mail.mail_services.service import (
     JobDetectionResult,
 )
+from app.mail.schemas import EmailCreate
 
 
 def detect_job_email(email: EmailCreate) -> JobDetectionResult:
@@ -124,6 +125,7 @@ def calculate_job_board_sender_score(sender: str) -> int:
 def calculate_unsubscribe_score(text: str) -> None:
     text = text.lower()
     return sum(keyword in text for keyword in UNSUBSCRIBE_KEYWORDS)
+
 
 def calculate_rejection_score(text: str) -> int:
     text = text.lower()

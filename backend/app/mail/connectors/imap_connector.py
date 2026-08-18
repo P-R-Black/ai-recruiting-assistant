@@ -2,10 +2,10 @@ import imaplib
 
 from sqlalchemy.orm import Session
 
+from app.mail.mail_services.importer import import_email
+from app.mail.mail_services.parser import parse_email
+from app.mail.mail_services.service import IMAPSettings
 from app.mail.models import Email
-from app.services.importer import import_email
-from app.services.parser import parse_email
-from app.services.service import IMAPSettings
 
 # ----------------------------
 # IMAP
@@ -65,16 +65,6 @@ def fetch_message(
     """
 
     status, data = client.fetch(message_id, "(BODY[])")
-
-
-    # status, mailbox_info = client.select("INBOX")
-    # print("DEBUG status:", status)
-    # print("DEBUG mailbox_info:", mailbox_info)
-
-    # status, data = client.fetch(message_id, "(RFC822)")
-    # print(client.fetch(message_id, "(FLAGS)"))
-    # print(client.fetch(message_id, "(BODY[])"))
-    # print(client.fetch(message_id, "(RFC822)"))
 
 
 

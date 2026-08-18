@@ -194,3 +194,26 @@ NON_PERSON_WORDS = {
 
 JOB_EMAIL_THRESHOLD = 3
 URL_PATTERN = re.compile(r"https?://\S+")
+
+SALARY_PATTERN = re.compile(
+    r"""
+    (?:
+        (?P<range_currency>[$€£])?
+        \s*
+        (?P<range_min>\d{1,3}(?:,\d{3})*(?:\.\d+)?|\d+(?:\.\d+)?)
+        \s*
+        (?:-|–|—|to)
+        \s*
+        (?P<range_max_currency>[$€£])?
+        \s*
+        (?P<range_max>\d{1,3}(?:,\d{3})*(?:\.\d+)?|\d+(?:\.\d+)?)
+    )
+    |
+    (?:
+        (?P<single_currency>[$€£])?
+        \s*
+        (?P<single_min>\d{1,3}(?:,\d{3})*(?:\.\d+)?|\d+(?:\.\d+)?)
+    )
+    """,
+    re.VERBOSE | re.IGNORECASE,
+)

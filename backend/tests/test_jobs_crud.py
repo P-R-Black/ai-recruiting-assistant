@@ -9,6 +9,7 @@ from app.jobs.schemas import JobCreate, JobUpdate
 def test_create_job(db, job_data):
   
     created = create_job(db, job_data)
+    
 
     assert created.id is not None
     assert created.title == job_data.title
@@ -50,22 +51,25 @@ def test_list_jobs(db, job_data):
 
 
 def test_list_jobs_filter_by_status(db, job_data):
-    created = create_job(db, job_data)
 
+    created = create_job(db, job_data)
+ 
     reviewed = JobCreate(
         **{
             **job_data.model_dump(mode="json"),
             "title": "Reviewed Job",
+            "fingerprint": "b" * 64
         }
     )
 
-    created = create_job(db, reviewed)
-    update_job_status(db, created.id, JobStatus.REVIEWED)
+    reviewed_job = create_job(db, reviewed)
+  
+    update_job_status(db, reviewed_job.id, JobStatus.REVIEWED)
 
     jobs = list_jobs(db, status=JobStatus.REVIEWED)
 
     assert len(jobs) == 1
-    assert jobs[0].id == created.id
+    assert jobs[0].id == reviewed_job.id
     assert jobs[0].status == JobStatus.REVIEWED
 
 
@@ -77,6 +81,7 @@ def test_list_jobs_filter_by_company(db, job_data):
             **job_data.model_dump(mode="json"),
             "title": "OpenAI Job",
             "company": "Backend Engineer",
+            "fingerprint": "b" * 64
         }
     )
 
@@ -88,11 +93,13 @@ def test_list_jobs_filter_by_company(db, job_data):
 
 
 def test_list_jobs_pagination(db, job_data):
+    alpha_list = ["b", "c", "d", "e", "f", "g"]
     for i in range(5):
         job = JobCreate(
             **{
                 **job_data.model_dump(mode="json"),
                 "title": f"Job {i}",
+                "fingerprint": str(alpha_list[i]) * 64
             }
         )
         create_job(db, job)

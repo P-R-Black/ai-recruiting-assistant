@@ -8,6 +8,7 @@ from app.core.database import get_db
 from app.jobs import crud
 from app.jobs.models import JobSource, JobStatus
 from app.jobs.schemas import JobCreate, JobResponse, JobStatusUpdate, JobUpdate
+from app.mail.models import WorkLocation
 
 router = APIRouter(
     prefix="/jobs",
@@ -32,7 +33,7 @@ def list_jobs_endpoint(
     company: str | None = None,
     location: str | None = None,
     employment_type: str | None = None,
-    remote_type: str | None = None,
+    work_location: WorkLocation | None = None,
     salary_min: int | None = None,
     salary_max: int | None = None,
     salary_currency: str | None = None,
@@ -47,7 +48,7 @@ def list_jobs_endpoint(
         company=company, 
         location=location, 
         employment_type=employment_type, 
-        remote_type=remote_type, 
+        work_location=work_location, 
         salary_min=salary_min, 
         salary_max=salary_max, 
         salary_currency=salary_currency)

@@ -7,8 +7,9 @@ from app.constants.keyword_list import (
     NON_PERSON_WORDS,
     RECRUITER_TITLE_KEYWORDS,
     SALARY_KEYWORDS,
+    SALARY_PATTERN,
 )
-from app.mail.models import EmailProvider, WorkLocation
+from app.mail.models import EmailProvider, EmploymentType, WorkLocation
 
 
 @dataclass
@@ -48,8 +49,7 @@ class ExtractJob:
     location: str | None
     salary: str | None
     apply_url: str | None
-    remote: bool = False
-    employment_type: str | None = None
+    employment_type: EmploymentType = EmploymentType.UNKNOWN
     recruiter: str | None = None
     work_location: WorkLocation = WorkLocation.UNKNOWN
 
@@ -61,6 +61,11 @@ class ExtractedValue:
     confidence: float = 1.0
 
 
+@dataclass
+class ParsedSalary:
+    salary_min: int | None
+    salary_max: int | None
+    currency: str | None
 
 
 
@@ -207,6 +212,52 @@ def get_clean_lines(text: str) -> list[str]:
     ]
 
 
+def parse_salary(salary: str | None) -> ParsedSalary:
+    if not salary:
+        return ParsedSalary(
+            salary_min=None,
+            salary_max=None,
+            currency=None,
+        )
 
+    match = SALARY_PATTERN.search(salary)
 
+    if not match:
+        return ParsedSalary(
+            salary_min=None,
+            salary_max=None,
+            currency=None,
+        )
 
+    currency_map = {
+        "$": "USD",
+        "€": "EUR",
+        "£": "GBP",
+    }
+
+    if match.group("range_min") is not None:
+
+        currency_symbol = match.group("range_currency")
+
+        salary_min = int(
+            float(match.group("range_min").replace(",", ""))
+        )
+
+        salary_max = int(
+            float(match.group("range_max").replace(",", ""))
+        )
+
+    else:
+        currency_symbol = match.group("single_currency")
+
+        salary_min = int(
+            float(match.group("single_min").replace(",", ""))
+        )
+
+        salary_max = None
+
+    return ParsedSalary(
+        salary_min=salary_min,
+        salary_max=salary_max,
+        currency=currency_map.get(currency_symbol),
+    )

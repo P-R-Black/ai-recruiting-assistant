@@ -1,6 +1,6 @@
 
 
-from app.services.service import OutlookSettings
+from app.mail.mail_services.service import OutlookSettings
 
 # ----------------------------
 # IMAP

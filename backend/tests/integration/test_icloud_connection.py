@@ -1,13 +1,16 @@
 import pytest
 
 from app.core.config import settings
-from app.services.detector import detect_job_email
-from app.services.imap_connector import connect_imap, fetch_message, search_messages
+from app.mail.mail_services.detector import detect_job_email
+from app.mail.connectors.imap_connector import (connect_imap, fetch_message, search_messages, fetch_imap_messages)
 from app.mail.models import EmailProvider
-from app.services.parser import parse_email
+from app.mail.mail_services.parser import parse_email
 from app.mail.providers.icloud import create_icloud_settings
 
+from contextlib import contextmanager
 
+
+# @contextmanager
 @pytest.fixture
 def icloud_connection():
     settings_obj = create_icloud_settings(
@@ -62,7 +65,8 @@ def test_message_fetch_after_connection(icloud_connection):
    
     ids = search_messages(icloud_connection)
 
-    raw_email = fetch_message(icloud_connection, ids[0])
+    raw_email = fetch_message(icloud_connection, ids[-1])
+    
 
     assert isinstance(raw_email, bytes)
     assert len(raw_email) > 0
@@ -71,6 +75,8 @@ def test_message_fetch_after_connection(icloud_connection):
         raw_email,
         EmailProvider.ICLOUD,
     )
+
+    print("DEBUG raw_email", email)
 
     assert email is not None
     assert email.provider == EmailProvider.ICLOUD
@@ -101,6 +107,7 @@ def test_detect_real_email(icloud_connection):
     assert isinstance(result.is_job, bool)
     assert isinstance(result.score, int)
     
+
 
 
 

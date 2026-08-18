@@ -1,6 +1,6 @@
 
+from app.mail.mail_services.service import IMAPSettings
 from app.mail.models import EmailProvider
-from app.services.service import IMAPSettings
 
 # ----------------------------
 # iCloud API

@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.jobs.models import Job
 from app.jobs.schemas import JobCreate
+
+from app.mail.models import Email
 from app.mail.models import EmailProvider, EmploymentType, WorkLocation
 from app.mail.schemas import EmailCreate
 from app.main import app
@@ -18,6 +20,7 @@ def client():
 
 @pytest.fixture
 def job_data() -> JobCreate:
+    fingerprint = "a" * 64
     return JobCreate(
         title="Senior Python Developer",
         company="OpenAI",
@@ -30,10 +33,13 @@ def job_data() -> JobCreate:
         description="A long enough description for validation purposes.",
         job_url="https://example.com/jobs/1",
         source="mail",
+        fingerprint=fingerprint
+     
     )
 
 @pytest.fixture
 def job_payload():
+    fingerprint = "a" * 64
     return {
         "title": "Senior Python Developer",
         "company": "OpenAI",
@@ -46,14 +52,17 @@ def job_payload():
         "description": "A long enough description for validation purposes.",
         "job_url": "https://example.com/jobs/1",
         "source": "mail",
+        "fingerprint": fingerprint
     }
-
 
 @pytest.fixture
 def db() -> Session:
     session = SessionLocal()
 
+    print("DATABASE:", session.bind.url)
+
     session.query(Job).delete()
+    session.query(Email).delete()
     session.commit()
 
     try:
@@ -61,17 +70,28 @@ def db() -> Session:
     finally:
         session.rollback()
         session.query(Job).delete()
+        session.query(Email).delete()
         session.commit()
         session.close()
+        
+# @pytest.fixture
+# def db() -> Session:
+#     session = SessionLocal()
+
+#     session.query(Job).delete()
+#     session.query(Email).delete()
+#     session.commit()
+
+#     try:
+#         yield session
+#     finally:
+#         session.rollback()
+#         session.query(Job).delete()
+#         session.query(Email).delete()
+#         session.commit()
+#         session.close()
 
 
-    # session = SessionLocal()
-    
-    # try:
-    #     yield session
-    # finally:
-    #     session.rollback()
-    #     session.close()
 
 
 @pytest.fixture

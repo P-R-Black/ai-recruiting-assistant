@@ -69,3 +69,63 @@
 #         print('Error:', {e})
 
 # main()
+
+import pandas as pd
+import requests
+from bs4 import BeautifulSoup
+
+import email
+from email import policy
+from bs4 import BeautifulSoup
+
+def extract_html_from_email(email_file_path):
+    # 1. Read the email file using the standard policy rules
+    with open(email_file_path, 'rb') as f:
+        msg = email.message_from_bytes(f.read(), policy=policy.default)
+    
+    # 2. Extract the HTML payload from the email structure
+    html_content = None
+    if msg.is_multipart():
+        # Iterate through email parts to locate the HTML section
+        for part in msg.walk():
+            if part.get_content_type() == 'text/html':
+                html_content = part.get_payload(decode=True).decode(part.get_content_charset() or 'utf-8')
+                break
+    else:
+        # Handle non-multipart emails
+        if msg.get_content_type() == 'text/html':
+            html_content = msg.get_payload(decode=True).decode(msg.get_content_charset() or 'utf-8')
+            
+    return html_content
+
+def parse_html_content(html_str):
+    print('parse_html_content called')
+    if not html_str:
+        return "No HTML content found in this email."
+        
+    # 3. Parse the HTML using Beautiful Soup
+    soup = BeautifulSoup(html_str, 'html.parser')
+    print('DEBUG soup:', soup)
+    
+    
+    # Example A: Extract all visible plain text cleanly
+    plain_text = soup.get_text(separator=' ', strip=True)
+    
+    # Example B: Extract specific elements (like all hyperlinks)
+    links = [a['href'] for a in soup.find_all('a', href=True)]
+    
+    return {
+        "text": plain_text,
+        "links": links
+    }
+
+# --- Execution ---
+file_path = "example_email.eml" # Replace with your email file path
+# raw_html = extract_html_from_email(file_path)
+# parsed_data = parse_html_content(raw_html)
+
+# print("--- Cleaned Text Body ---")
+# print(parsed_data["text"])
+
+# print("\n--- Extracted Links ---")
+# print(parsed_data["links"])

@@ -2,11 +2,12 @@ from venv import logger
 
 from sqlalchemy.orm import Session
 
+from app.mail.mail_services.importer import import_emails
+
 # from app.mail.providers.gmail import fetch_gmail_messages
 from app.mail.models import EmailProvider
 from app.mail.providers.icloud import fetch_icloud_messages
 from app.mail.providers.outlook import fetch_outlook_messages
-from app.services.importer import import_emails
 
 
 def fetch_messages(provider, settings):

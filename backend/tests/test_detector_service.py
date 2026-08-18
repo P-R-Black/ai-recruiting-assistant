@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from app.services.detector import (
+from app.mail.mail_services.detector import (
     calculate_job_board_sender_score,
     calculate_job_keyword_score,
     calculate_recruiter_sender_score,

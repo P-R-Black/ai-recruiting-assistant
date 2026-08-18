@@ -6,8 +6,6 @@ from app.mail.models import EmploymentType
 def test_create_job_endpoint(client, db, job_payload):
 
     response = client.post("/jobs/", json=job_payload)
-    print('DEBUG test_create_job_endpoint response.json', response.json())
-
     assert response.status_code == 201
 
     data = response.json()
@@ -23,12 +21,14 @@ def test_create_job_endpoint(client, db, job_payload):
     job = db.get(Job, UUID(data["id"]))
     assert job is not None
     assert job.title == job_payload["title"]
+    assert data["fingerprint"] == job_payload["fingerprint"]
 
 
 
 def test_list_jobs_endpoint(client, db):
     response = client.get("/jobs/")
     assert response.status_code == 200
+    
     data = response.json()
     assert isinstance(data, list)
 
@@ -49,6 +49,7 @@ def test_list_jobs_filter_status_endpoint(client, db, job_payload):
     data = response.json()
     
     assert isinstance(data, list)
+
     assert any(job["id"] == str(job_id) for job in data)
 
 

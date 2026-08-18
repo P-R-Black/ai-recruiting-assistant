@@ -13,9 +13,7 @@ from app.constants.keyword_list import (
     TEMPORARY_KEYWORDS,
     URL_PATTERN,
 )
-from app.mail.models import EmploymentType, WorkLocation
-from app.mail.schemas import EmailCreate
-from app.services.service import (
+from app.mail.mail_services.service import (
     ExtractedValue,
     ExtractJob,
     calculate_apply_url_score,
@@ -28,6 +26,8 @@ from app.services.service import (
     looks_like_recruiter_title,
     looks_like_salary,
 )
+from app.mail.models import EmploymentType, WorkLocation
+from app.mail.schemas import EmailCreate
 
 
 def extract_job_information(email: EmailCreate) -> ExtractJob:
@@ -39,15 +39,22 @@ def extract_job_information(email: EmailCreate) -> ExtractJob:
     title = extract_job_title(searchable)
     company = extract_company_name(searchable, title)
     location = extract_location(searchable, company)
+
     salary = extract_salary(searchable, location)
-    apply_url = extract_apply_url(email)
+    employment_type = extract_employment_type(searchable)
+    recruiter = extract_recruiter_name(searchable)
+    work_location = extract_work_location(searchable)
+    apply_url = extract_application_url(email)
 
     return ExtractJob(
         title=title.value,
         company=company.value,
         location=location.value,
         salary=salary.value,
-        apply_url=apply_url,
+        apply_url=apply_url.value,
+        employment_type=employment_type.value,
+        recruiter=recruiter.value,
+        work_location=work_location.value,
         
     )
 
@@ -259,7 +266,7 @@ def extract_company_website(
     )
 
 
-def extract_application_url(email: EmailCreate) -> str | None:
+def extract_application_url(email: EmailCreate) -> ExtractedValue:
 
     matches = URL_PATTERN.findall(email.raw_body)
 
