@@ -8,7 +8,6 @@ from app.mail.mail_services.extractor import extract_job_information
 from app.mail.mappers.job_email import build_job_create
 from app.mail.models import Email
 
-
 # For Emails with one or more jobs
 # def create_jobs_from_email(
 #     db: Session,

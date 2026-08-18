@@ -1,7 +1,7 @@
 import email
+from datetime import datetime, timezone
 from email import policy
 from email.utils import parseaddr, parsedate_to_datetime
-from datetime import datetime, timezone
 
 from app.mail.models import EmailProvider
 from app.mail.normalizer.base import ParsedEmail
@@ -58,9 +58,11 @@ def build_parsed_email(raw_bytes: bytes, provider: EmailProvider) -> ParsedEmail
 
     date_header = msg.get("Date")
     try:
-        received_at = parsedate_to_datetime(date_header) if date_header else datetime.now(timezone.utc)
+        received_at = parsedate_to_datetime(
+            date_header) if date_header else datetime.now(timezone.utc)
     except (TypeError, ValueError):
-        received_at = datetime.now(timezone.utc)  # malformed Date header fallback
+        # malformed Date header fallback
+        received_at = datetime.now(timezone.utc)
 
     return ParsedEmail(
         message_id=msg.get("Message-ID", "").strip("<>"),

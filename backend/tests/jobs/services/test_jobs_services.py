@@ -1,5 +1,5 @@
 from app.jobs.models import JobSource, Job
-from app.jobs.jobs_services.service import create_job_from_email, create_jobs_from_email
+from app.jobs.jobs_services.service import create_job_from_email, create_job_from_email
 
 from app.mail.crud import create_email
 

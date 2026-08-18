@@ -3,13 +3,8 @@ from email.utils import parseaddr
 
 from bs4 import BeautifulSoup
 
-
-from app.mail.normalizer.base import NormalizedJob, BaseEmailNormalizer, ParsedEmail
 from app.mail.mail_services.mime_parser import get_html_from_raw_email
-
-from app.mail.connectors.imap_connector import connect_imap, fetch_message, search_messages
-from tests.integration.test_icloud_connection import icloud_connection
-
+from app.mail.normalizer.base import BaseEmailNormalizer, NormalizedJob, ParsedEmail
 
 
 class GlassdoorNormalizer(BaseEmailNormalizer):
@@ -66,7 +61,8 @@ KNOWN_JOB_BOARDS = {
     "linkedin.com": "linkedin",
     "indeed.com": "indeed",
     "match.indeed.com":"indeed",
-    "indeedemail.com": "indeed",       # Indeed sometimes sends from this domain instead
+    # Indeed sometimes sends from this domain instead
+    "indeedemail.com": "indeed",      
     "ziprecruiter.com": "ziprecruiter",
 
 }
@@ -76,8 +72,9 @@ def identify_job_board(raw_bytes: bytes) -> str | None:
     """Identify which job board sent this email, based on the From header."""
     msg = email.message_from_bytes(raw_bytes)
     from_header = msg.get("From", "")
-
-    _, sender_email = parseaddr(from_header)  # "Glassdoor Jobs <noreply@glassdoor.com>" -> "noreply@glassdoor.com"
+    
+    # "Glassdoor Jobs <noreply@glassdoor.com>" -> "noreply@glassdoor.com"
+    _, sender_email = parseaddr(from_header)
     if "@" not in sender_email:
         return None
 

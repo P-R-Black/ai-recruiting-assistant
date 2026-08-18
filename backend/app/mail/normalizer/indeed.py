@@ -1,12 +1,8 @@
-import email
-from email.utils import parseaddr
 
 from bs4 import BeautifulSoup
 
-from app.mail.normalizer.base import NormalizedJob, BaseEmailNormalizer, ParsedEmail
+from app.mail.normalizer.base import BaseEmailNormalizer, NormalizedJob, ParsedEmail
 
-from app.mail.connectors.imap_connector import connect_imap, fetch_message, search_messages
-from tests.integration.test_icloud_connection import icloud_connection
 
 class IndeedNormalizer(BaseEmailNormalizer):
     def normalize(

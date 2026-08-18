@@ -1,13 +1,11 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
 
-from app.jobs.models import JobBoard
-from app.mail.schemas import EmailCreate
-from app.mail.models import EmailProvider
 # from app.mail.parser import ParsedEmail
-
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
+
+from app.mail.models import EmailProvider
 
 
 class NormalizedJobSource(str, Enum):

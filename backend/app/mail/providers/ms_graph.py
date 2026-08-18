@@ -70,13 +70,11 @@
 
 # main()
 
-import pandas as pd
-import requests
-from bs4 import BeautifulSoup
-
 import email
 from email import policy
+
 from bs4 import BeautifulSoup
+
 
 def extract_html_from_email(email_file_path):
     # 1. Read the email file using the standard policy rules
@@ -89,12 +87,16 @@ def extract_html_from_email(email_file_path):
         # Iterate through email parts to locate the HTML section
         for part in msg.walk():
             if part.get_content_type() == 'text/html':
-                html_content = part.get_payload(decode=True).decode(part.get_content_charset() or 'utf-8')
+                html_content = part.get_payload(
+                    decode=True
+                    ).decode(part.get_content_charset() or 'utf-8')
                 break
     else:
         # Handle non-multipart emails
         if msg.get_content_type() == 'text/html':
-            html_content = msg.get_payload(decode=True).decode(msg.get_content_charset() or 'utf-8')
+            html_content = msg.get_payload(
+                decode=True).decode(
+                    msg.get_content_charset() or 'utf-8')
             
     return html_content
 

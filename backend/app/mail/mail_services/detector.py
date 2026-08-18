@@ -9,7 +9,6 @@ from app.constants.keyword_list import (
     REJECTION_KEYWORDS,
     UNSUBSCRIBE_KEYWORDS,
 )
-
 from app.mail.mail_services.service import (
     JobDetectionResult,
 )
