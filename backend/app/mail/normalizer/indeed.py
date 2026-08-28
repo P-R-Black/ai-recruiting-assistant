@@ -1,9 +1,7 @@
 
 from bs4 import BeautifulSoup
 
-from app.mail.normalizer.base import (
-    BaseEmailNormalizer, NormalizedJob, ParsedEmail, email_metadata
-    )
+from app.mail.normalizer.base import BaseEmailNormalizer, NormalizedJob, ParsedEmail, email_metadata
 
 
 class IndeedNormalizer(BaseEmailNormalizer):
