@@ -5,11 +5,12 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String, Text, func
+from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Integer, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+from app.jobs.classifiers.role import JobRoleType, ResumeRecommendation
 from app.mail.models import EmploymentType, WorkLocation
 
 if TYPE_CHECKING:
@@ -117,13 +118,15 @@ class Job(Base):
     )
 
     email_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
         ForeignKey("emails.id"),
-        unique=True
+        nullable=True,
+        index=True
     )
 
-    email: Mapped["Email"] = relationship(
+    email: Mapped["Email | None"] = relationship(
         "Email",
-        back_populates="job"
+        back_populates="jobs"
     )
 
     fingerprint: Mapped[str] = mapped_column(
@@ -131,6 +134,27 @@ class Job(Base):
         unique=True,
         index=True,
         nullable=False,
+    )
+
+    role_type: Mapped[JobRoleType] = mapped_column(
+        Enum(
+            JobRoleType,
+            values_callable=lambda enum_cls: [member.value for member in enum_cls],
+        ),
+        nullable=True,
+    )
+
+    recommended_resume: Mapped[ResumeRecommendation] = mapped_column(
+        Enum(
+            ResumeRecommendation,
+            values_callable=lambda enum_cls: [member.value for member in enum_cls],
+        ),
+        nullable=True,
+    )
+
+    is_relevant: Mapped[bool] = mapped_column(
+        Boolean, 
+        nullable=True
     )
 
 

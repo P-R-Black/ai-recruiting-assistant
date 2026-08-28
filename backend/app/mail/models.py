@@ -62,8 +62,13 @@ class Email(Base):
         primary_key=True,
         default=uuid.uuid4,
     )
+    
     provider: Mapped[EmailProvider] = mapped_column(
-        Enum(EmailProvider)
+        Enum(
+            EmailProvider,
+            values_callable=lambda enum_cls: [member.value for member in enum_cls],
+        ),
+        nullable=False
     )
     
     message_id: Mapped[str] = mapped_column(
@@ -114,9 +119,8 @@ class Email(Base):
         nullable=False
     )
 
-    job: Mapped["Job | None"] = relationship(
+    jobs: Mapped[list["Job"]] = relationship(
         "Job",
         back_populates="email",
-        uselist=False,
     )
 

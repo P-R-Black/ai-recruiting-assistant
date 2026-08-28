@@ -16,7 +16,7 @@ class EmailCreate(BaseModel):
     sender: Annotated[str, Field(max_length=255)]
     recipient: Annotated[str, Field(max_length=255)]
     received_at: datetime
-    raw_body: str
+    raw_body: str | None
 
     model_config = ConfigDict(
         extra="forbid",

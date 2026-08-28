@@ -2,6 +2,7 @@
 import hashlib
 
 from app.mail.mail_services.service import ExtractJob
+from app.mail.normalizer.base import NormalizedJob
 
 
 def normalize_for_fingerprint(value: str | None) -> str:
@@ -18,6 +19,21 @@ def calculate_job_fingerprint(extracted: ExtractJob) -> str:
         normalize_for_fingerprint(extracted.location),
         extracted.employment_type.value,
         extracted.work_location.value,
+    ]
+
+    fingerprint_source = "|".join(parts)
+    return hashlib.sha256(
+        fingerprint_source.encode("utf-8")
+    ).hexdigest()
+
+
+def calculate_normalized_job_fingerprint(extracted: NormalizedJob) -> str:
+    parts = [
+        normalize_for_fingerprint(extracted.company),
+        normalize_for_fingerprint(extracted.title),
+        normalize_for_fingerprint(extracted.location),
+        # extracted.employment_type.value,
+        # extracted.work_location.value,
     ]
 
     fingerprint_source = "|".join(parts)

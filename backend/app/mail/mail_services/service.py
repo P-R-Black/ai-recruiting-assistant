@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Any
 
+from sqlalchemy.orm import Session
+
 from app.constants.keyword_list import (
     APPLY_URL_KEYWORDS,
     NON_APPLY_URL_KEYWORDS,
@@ -9,7 +11,10 @@ from app.constants.keyword_list import (
     SALARY_KEYWORDS,
     SALARY_PATTERN,
 )
-from app.mail.models import EmailProvider, EmploymentType, WorkLocation
+from app.mail.crud import create_email, get_email_by_message_id
+from app.mail.mappers.job_email import build_email_create_from_normalized
+from app.mail.models import Email, EmailProvider, EmploymentType, WorkLocation
+from app.mail.normalizer.base import NormalizedJob
 
 
 @dataclass
@@ -261,3 +266,26 @@ def parse_salary(salary: str | None) -> ParsedSalary:
         salary_max=salary_max,
         currency=currency_map.get(currency_symbol),
     )
+
+
+
+def persist_normalized_email(
+        db: Session,
+        jobs: list[NormalizedJob],
+
+    ) -> Email | None:
+
+
+    if not jobs: 
+        return None
+
+    first = jobs[0]
+
+    existing = get_email_by_message_id(db, first.message_id)
+
+    if existing:
+        return existing
+
+    email_data = build_email_create_from_normalized(first)
+    # return email_data
+    return create_email(db, email_data)

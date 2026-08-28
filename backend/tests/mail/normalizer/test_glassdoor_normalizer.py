@@ -33,21 +33,21 @@ print("FIXTURES:", FIXTURES)
 # Uncomment when a new real email needs to be captured for testing.
 # This intentionally uses a live iCloud connection and should not
 # be part of the normal test suite.
-# @pytest.fixture
-# def icloud_connection():
-#     settings_obj = create_icloud_settings(
-#         username=settings.icloud_username,
-#         password=settings.icloud_password,
-#     )
+@pytest.fixture
+def icloud_connection():
+    settings_obj = create_icloud_settings(
+        username=settings.icloud_username,
+        password=settings.icloud_password,
+    )
 
-#     connection = connect_imap(settings_obj)
+    connection = connect_imap(settings_obj)
 
-#     yield connection
+    yield connection
 
-#     try:
-#         connection.logout()
-#     except Exception:
-#         pass
+    try:
+        connection.logout()
+    except Exception:
+        pass
 
 
 # def test_to_get_raw_email_data(icloud_connection):
@@ -60,16 +60,16 @@ print("FIXTURES:", FIXTURES)
 #         f.write(raw_email)
 
     
+
+
+def load_email_fixture(name: str) -> bytes:
+    return (FIXTURES / name).read_bytes()
+
 @pytest.mark.integration
 @pytest.mark.skipif(
     settings.icloud_username is None,
     reason="iCloud credentials not configured",
 )
-
-def load_email_fixture(name: str) -> bytes:
-    return (FIXTURES / name).read_bytes()
-
-
 def test_glassdoor_email():
     raw_email = load_email_fixture("glassdoor_multiple_jobs.eml")
 
@@ -95,8 +95,8 @@ def test_glassdoor_normalizer():
 
     jobs = normalizer.normalize(parsed)
 
-    # print('jobs:', jobs)
-    print('jobs:', jobs[0])
+    print('jobs:', jobs)
+    # print('jobs:', jobs[0])
 
     assert len(jobs) == 10
     assert jobs[0].title == "IT Business Systems Developer"
@@ -107,7 +107,7 @@ def test_glassdoor_normalizer():
 
 def test_glassdoor_normalizer_extracts_unique_urls():
     raw_email = load_email_fixture(
-        "zip_recruiter_multiple_jobs.eml"
+        "glassdoor_multiple_jobs.eml"
     )
 
     parsed = build_parsed_email(
@@ -152,3 +152,45 @@ def test_zip_recruiter_without_html_returns_no_jobs():
     jobs = GlassdoorNormalizer().normalize(parsed)
 
     assert jobs == []
+
+
+
+
+
+
+
+# def test_normalizer_stuff(icloud_connection):
+   
+#     ids = search_messages(icloud_connection)
+#     # print('ids', ids[:-1])
+#     raw_email = fetch_message(icloud_connection, b'1499')
+#     # print('raw_email:', raw_email)
+
+#     # email = parse_email(
+#     #     raw_email,
+#     #     EmailProvider.ICLOUD,
+#     # )
+
+    
+#     parsed = build_parsed_email(
+#             raw_email,
+#             EmailProvider.ICLOUD,
+#         )
+
+#     print('parsed ->raw_email:', parsed)
+    
+#     normalizer = GlassdoorNormalizer()
+    
+#     jobs = normalizer.normalize(parsed)
+#     print('jobs:', jobs)
+
+
+"""
+Run individual tests
+uv run pytest tests/test_jobs_api.py
+make test TEST=tests/test_jobs_api.py
+uv run pytest -s (to show print statements for passing tests)
+uv run pytest -s tests/test_jobs_api.py (to show print statements for passing tests)
+uv run pytest tests/mail/normalizer/test_glassdoor_normalizer.py::test_normalizer_stuff (to run specific test)
+"""
+

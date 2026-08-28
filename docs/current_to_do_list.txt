@@ -15,24 +15,25 @@
 ✅ Commit and return the created job
 ✅ Test the mapping independently before integrating it into the email-import flow
 
-- Link the original email to the job
-- Avoid duplicate jobs
-""
-the email import/background-processing pipeline, and specifically how we want to represent an email that contains multiple job listings before changing extract_job_information()
-""
+✅ Link the original email to the job
+✅ Avoid duplicate jobs
+✅ Link original Email → Job
 
-3. Confidence scoring for extraction
-- Right now every extracted field is basically 1.0 or 0.0.
-- Eventually every field should carry its own confidence.
+
+3. Confidence scoring
+⬜ Field-level confidence
+
 
 4. Classification
-- Interview invitation
-- Application confirmation
-- Rejection
-- Job alert
-- Recruiter outreach
+⬜ Interview invitation
+⬜ Application confirmation
+⬜ Rejection
+⬜ Job alert
+⬜ Recruiter outreach
+
 
 5. AI enrichment
-- Once the deterministic extractor is solid, let AI fill in missing fields.
+⬜ Enrich missing job fields
+⬜ Eventually analyze job fit
 
 ✅

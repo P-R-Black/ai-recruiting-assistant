@@ -25,6 +25,13 @@ class NormalizedJob:
     salary: str | None
     job_url: str | None
 
+    provider: EmailProvider | None
+    message_id: str | None
+    subject: str | None
+    sender: str | None
+    recipient: str | None
+    received_at: datetime | None
+
 
 
 
@@ -63,3 +70,18 @@ class BaseEmailNormalizer(ABC):
         job opportunities.
         """
         raise NotImplementedError
+
+
+def email_metadata(email: ParsedEmail) -> dict:
+    """Shared metadata every NormalizedJob from this email will carry"""
+
+    # print('_email_metadata:', email)
+
+    return {
+        "provider": email.provider,
+        "message_id": email.message_id,
+        "subject": email.subject,
+        "sender": email.sender,
+        "recipient": email.recipient,
+        "received_at": email.received_at,
+        }

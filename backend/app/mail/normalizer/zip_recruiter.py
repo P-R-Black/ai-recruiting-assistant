@@ -1,7 +1,7 @@
 
 from bs4 import BeautifulSoup
 
-from app.mail.normalizer.base import BaseEmailNormalizer, NormalizedJob, ParsedEmail
+from app.mail.normalizer.base import BaseEmailNormalizer, NormalizedJob, ParsedEmail, email_metadata
 
 
 class ZipRecruiterNormalizer(BaseEmailNormalizer):
@@ -9,16 +9,21 @@ class ZipRecruiterNormalizer(BaseEmailNormalizer):
             self,
             email: ParsedEmail,
     ) -> list[NormalizedJob]:
-
-        if email.html_body is None:
-            return []
         
-        return extract_ziprecruiter_jobs(email.html_body)
+        if email.html_body is None:
+                    return []
+        
+        
+        return extract_ziprecruiter_jobs(email)
     
 
-def extract_ziprecruiter_jobs(html: str) -> list[dict]:
-    soup = BeautifulSoup(html, "html.parser")
+def extract_ziprecruiter_jobs(email: ParsedEmail) -> list[NormalizedJob]:
+    soup = BeautifulSoup(email.html_body, "html.parser")
+    metadata = email_metadata(email)
     jobs = []
+
+    # soup = BeautifulSoup(html, "html.parser")
+    # jobs = []
 
     # ZipRecruiter marks every job title link with this exact class -
     # it's the most reliable anchor in their template
@@ -59,6 +64,7 @@ def extract_ziprecruiter_jobs(html: str) -> list[dict]:
                 location=location,
                 salary=salary,
                 job_url=url,
+                **metadata
             )
         )
 

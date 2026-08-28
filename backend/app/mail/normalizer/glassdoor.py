@@ -4,7 +4,9 @@ from email.utils import parseaddr
 from bs4 import BeautifulSoup
 
 from app.mail.mail_services.mime_parser import get_html_from_raw_email
-from app.mail.normalizer.base import BaseEmailNormalizer, NormalizedJob, ParsedEmail
+from app.mail.normalizer.base import (
+    BaseEmailNormalizer, NormalizedJob, ParsedEmail, email_metadata
+    )
 
 
 class GlassdoorNormalizer(BaseEmailNormalizer):
@@ -14,15 +16,20 @@ class GlassdoorNormalizer(BaseEmailNormalizer):
     ) -> list[NormalizedJob]:
         if email.html_body is None:
             return []
+
+        # print('DEBU GlassdoorNormalizer email:', email)
         
-        return extract_glassdoor_jobs(email.html_body)
+        return extract_glassdoor_jobs(email)
 
 
 
-def extract_glassdoor_jobs(html: str) -> list[dict]:
-    soup = BeautifulSoup(html, "html.parser")
+def extract_glassdoor_jobs(email: ParsedEmail) -> list[NormalizedJob]:
+
+    soup = BeautifulSoup(email.html_body, "html.parser")
+    metadata = email_metadata(email)
     jobs = []
 
+  
     for link in soup.find_all("a", href=True):
         if "jobListing.htm" not in link["href"]:
             continue  # skip "related jobs" links, footer links, etc.
@@ -34,9 +41,14 @@ def extract_glassdoor_jobs(html: str) -> list[dict]:
         title = p_tags[0].get_text(strip=True)
         location = p_tags[1].get_text(strip=True) if len(p_tags) > 1 else None
         salary = p_tags[2].get_text(strip=True) if len(p_tags) > 2 else None
-
-        company_span = link.find("span")
-        company = company_span.get_text(strip=True) if company_span else None
+       
+        company = None
+        for span in link.find_all("span"):
+            text = span.get_text(strip=True)
+            if not text or "★" in text:
+                continue
+            company = text
+            break
 
         jobs.append(
             NormalizedJob(
@@ -45,6 +57,7 @@ def extract_glassdoor_jobs(html: str) -> list[dict]:
                 location=location,
                 salary=salary,
                 job_url=link["href"],
+                **metadata
             )
         )
     return jobs

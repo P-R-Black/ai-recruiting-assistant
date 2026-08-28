@@ -67,7 +67,6 @@ def fetch_message(
     status, data = client.fetch(message_id, "(BODY[])")
 
 
-
     if status != "OK":
         raise RuntimeError(f"Failed to fetch message {message_id!r}")
 

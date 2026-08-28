@@ -1,7 +1,9 @@
 
 from bs4 import BeautifulSoup
 
-from app.mail.normalizer.base import BaseEmailNormalizer, NormalizedJob, ParsedEmail
+from app.mail.normalizer.base import (
+    BaseEmailNormalizer, NormalizedJob, ParsedEmail, email_metadata
+    )
 
 
 class IndeedNormalizer(BaseEmailNormalizer):
@@ -13,13 +15,18 @@ class IndeedNormalizer(BaseEmailNormalizer):
         if email.html_body is None:
             return []
         
-        return extract_indeed_jobs(email.html_body)
+        return extract_indeed_jobs(email)
 
     
 
-def extract_indeed_jobs(html: str) -> list[dict]:
-    soup = BeautifulSoup(html, "html.parser")
+def extract_indeed_jobs(email: ParsedEmail) -> list[NormalizedJob]:
+
+    soup = BeautifulSoup(email.html_body, "html.parser")
+    metadata = email_metadata(email)
     jobs = []
+
+    # soup = BeautifulSoup(html, "html.parser")
+    # jobs = []
 
     # Indeed tags the job title link with this specific class
     title_links = soup.find_all("a", class_="strong-text-link")
@@ -39,12 +46,7 @@ def extract_indeed_jobs(html: str) -> list[dict]:
                 company = p_tags[0].get_text(strip=True) if len(p_tags) > 0 else None
                 location = p_tags[1].get_text(strip=True) if len(p_tags) > 1 else None
 
-        # jobs.append({
-        #     "title": title,
-        #     "company": company,
-        #     "location": location,
-        #     "url": url,
-        # })
+
         jobs.append(
             NormalizedJob(
                 title=title,
@@ -52,6 +54,8 @@ def extract_indeed_jobs(html: str) -> list[dict]:
                 location=location,
                 salary=None,
                 job_url=url,
+                **metadata
+
             )
         )
 

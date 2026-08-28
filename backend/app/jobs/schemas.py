@@ -6,6 +6,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
 
+from app.jobs.classifiers.role import JobRoleType, ResumeRecommendation
 from app.jobs.models import JobSource, JobStatus
 from app.mail.models import EmploymentType, WorkLocation
 
@@ -39,6 +40,11 @@ class JobBase(BaseModel):
 
     email_id: UUID | None = None
     fingerprint: str
+
+    role_type: JobRoleType | None = None
+    recommended_resume: ResumeRecommendation | None = None
+
+    is_relevant: bool | None = None
 
     model_config = ConfigDict(
         extra="forbid",

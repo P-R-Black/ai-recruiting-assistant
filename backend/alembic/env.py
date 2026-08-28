@@ -59,6 +59,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+    
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
@@ -73,6 +74,9 @@ def run_migrations_online() -> None:
         with context.begin_transaction():
             context.run_migrations()
 
+    # safe to inspect afterward - migration transaction already committed
+    # with connectable.connect() as diag_connection:
+    #     print("ALEMBIC TABLES:", inspect(diag_connection).get_table_names())
 
 if context.is_offline_mode():
     run_migrations_offline()
