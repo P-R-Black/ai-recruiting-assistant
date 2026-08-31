@@ -6,12 +6,10 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.jobs import crud
+from app.jobs.classifiers.role import JobRoleType, ResumeRecommendation
 from app.jobs.models import JobSource, JobStatus
 from app.jobs.schemas import JobCreate, JobResponse, JobStatusUpdate, JobUpdate
 from app.mail.models import WorkLocation
-from app.jobs.classifiers.role import JobRoleType, ResumeRecommendation
-
-
 
 router = APIRouter(
     prefix="/jobs",

@@ -6,7 +6,6 @@ from app.mail.mail_services.mime_parser import build_parsed_email
 from app.mail.models import EmailProvider
 from app.mail.normalizer.glassdoor import GlassdoorNormalizer
 
-# /Users/paulblack/VS Code/ai-recruiting-assistant/backend/tests/mail/normalizer/fixtures/emails/glassdoor_multiple_jobs.eml
 BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
 
 FIXTURES_DIR = (

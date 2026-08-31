@@ -2,11 +2,10 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
+from app.jobs.classifiers.role import JobRoleType, ResumeRecommendation
 from app.jobs.models import Job, JobSource, JobStatus
 from app.jobs.schemas import JobCreate, JobUpdate
 from app.mail.mail_services.service import WorkLocation
-
-from app.jobs.classifiers.role import JobRoleType, ResumeRecommendation
 
 
 def create_job(db: Session, job: JobCreate) -> Job:

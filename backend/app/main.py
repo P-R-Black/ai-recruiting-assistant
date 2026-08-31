@@ -1,11 +1,10 @@
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.jobs.router import router as jobs_router
-from fastapi.middleware.cors import CORSMiddleware
-
 
 app = FastAPI(
     title="AI Recruiting Assistant API",
