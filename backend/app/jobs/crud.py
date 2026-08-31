@@ -6,6 +6,8 @@ from app.jobs.models import Job, JobSource, JobStatus
 from app.jobs.schemas import JobCreate, JobUpdate
 from app.mail.mail_services.service import WorkLocation
 
+from app.jobs.classifiers.role import JobRoleType, ResumeRecommendation
+
 
 def create_job(db: Session, job: JobCreate) -> Job:
     db_job = Job(**job.model_dump(mode="json"))
@@ -40,6 +42,9 @@ def list_jobs(
         salary_min: int | None = None,
         salary_max: int | None = None,
         salary_currency: str | None = None,
+        role_type: JobRoleType | None = None,
+        recommended_resume: ResumeRecommendation | None = None,
+        is_relevant: bool | None = None,
         ) -> list[Job]:
     
     query = db.query(Job)
@@ -64,6 +69,13 @@ def list_jobs(
     if salary_currency is not None:
         query = query.filter(Job.salary_currency.ilike(f"%{salary_currency}%"))
 
+    if role_type is not None:
+        query = query.filter(Job.role_type == role_type)
+    if recommended_resume is not None:
+        query = query.filter(Job.recommended_resume == recommended_resume)
+    if is_relevant is not None:
+        query = query.filter(Job.is_relevant == is_relevant)
+        
     return query.order_by(Job.created_at.desc()).offset(skip).limit(limit).all()
 
 

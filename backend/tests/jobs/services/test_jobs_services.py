@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 from app.jobs.models import JobSource, Job
 from app.jobs.jobs_services.service import (
-    create_job_from_email, create_job_from_email, persist_normalized_jobs
+    create_job_from_email, persist_normalized_jobs
     )
 
 

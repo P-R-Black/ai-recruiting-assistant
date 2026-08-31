@@ -6,6 +6,17 @@ from app.mail.mail_services.parser import (
     extract_html, extract_message_body, extract_plain_text, parse_email)
 
 
+
+"""
+All Test
+ 1. test_parse_email
+ 2. test_extract_plain_text
+ 3. test_extract_message_body_prefers_plain_text
+ 4. test_extract_message_body_uses_html_when_no_plain
+ 5. test_extract_html
+"""
+
+
 def test_parse_email():
     raw_email = (
     b"From: recruiter@example.com\r\n"

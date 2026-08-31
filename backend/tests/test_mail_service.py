@@ -4,48 +4,10 @@ from datetime import datetime, timezone
 from app.mail.models import EmailProvider
 from app.mail.schemas import EmailCreate
 
-# from app.mail.detector import
-# from app.mail.importer import
-# from app.mail.imap import
-# from app.mail.gmail import connect_gmail
 
 """
 All Test
-
-
- 6. 
-
-
- 9. test_job_keyword_score_application
-10. test_job_keyword_score_interview
-11. test_job_keyword_score_non_job
-12. test_job_keyword_score_empty
-13. test_recruiter_sender_score_company_recruiter
-14. test_recruiter_sender_score_company_employee
-15. test_recruiter_sender_score_gmail
-16. test_recruiter_sender_score_recruiter_gmail
-17. test_job_board_score_linkedin
-18. test_job_board_score_subdomain
-19. test_job_board_score_greenhouse
-20. test_job_board_score_unknown
-
-
-25. test_search_messages
-26. test_search_messages_empty
-27. test_search_messages_select_failure
-28. test_fetch_message
-29. test_fetch_message_failure
-30. test_fetch_message_empty
-31. test_fetch_imap_messages
-32. test_detect_job_email_linkedin
-33. test_detect_job_email_linkedin_jobalerts
-34. test_detect_job_email_glassdoor
-35. test_detect_job_email_indeed
-36. test_detect_job_email_recruiter
-37. test_detect_job_email_false_positive
-38. test_detect_job_email_empy
-39. test_threshold_job_threshold
-
+ 1. sample_job_email
 """
 
 def sample_job_email() -> EmailCreate:

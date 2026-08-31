@@ -10,6 +10,9 @@ from app.jobs.schemas import JobCreate
 from app.mail.models import Email
 from app.mail.models import EmailProvider, EmploymentType, WorkLocation
 from app.mail.schemas import EmailCreate
+
+from app.jobs.classifiers.role import JobRoleType, ResumeRecommendation
+
 from app.main import app
 
 
@@ -52,7 +55,31 @@ def job_payload():
         "description": "A long enough description for validation purposes.",
         "job_url": "https://example.com/jobs/1",
         "source": "mail",
-        "fingerprint": fingerprint
+        "fingerprint": fingerprint,
+        # "role_type": JobRoleType.UNKNOWN,
+        # "recommended_resume": ResumeRecommendation.UNKNOWN,
+        # "is_relevant": False
+    }
+
+@pytest.fixture
+def job_payload_two():
+    fingerprint = "b" * 64
+    return {
+        "title": "UI/UX Designer",
+        "company": "UI Major Designs",
+        "location": "Remote",
+        "employment_type": EmploymentType.FULL_TIME.value,
+        "work_location": WorkLocation.REMOTE.value,
+        "salary_min": 150000,
+        "salary_max": 200000,
+        "salary_currency": "USD",
+        "description": "Talented UI/UX developer needed for big project.",
+        "job_url": "https://example.com/jobs/2",
+        "source": "mail",
+        "fingerprint": fingerprint,
+        "role_type": JobRoleType.NON_SOFTWARE,
+        "recommended_resume": ResumeRecommendation.NON_SOFTWARE,
+        "is_relevant": False
     }
 
 @pytest.fixture

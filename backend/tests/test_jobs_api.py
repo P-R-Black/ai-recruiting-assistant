@@ -5,6 +5,7 @@ from app.mail.models import EmploymentType
 
 def test_create_job_endpoint(client, db, job_payload):
 
+
     response = client.post("/jobs/", json=job_payload)
     assert response.status_code == 201
 
@@ -156,6 +157,170 @@ def test_update_job_status_endpoint(client, job_payload):
 
     data = response.json()
     assert data["status"] == "reviewed"
+
+
+
+def test_list_jobs_filter_is_relevant_endpoint(client, db, job_payload, job_payload_two):
+    relevant_payload = {
+        **job_payload,
+        "is_relevant": True,
+    }
+
+
+    irrelevant_payload = {
+        **job_payload_two,
+    }
+
+
+    client.post("/jobs/", json=relevant_payload)
+    client.post("/jobs/", json=irrelevant_payload)
+
+    response = client.get("/jobs/?is_relevant=true")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["is_relevant"] is True
+
+
+def test_list_jobs_filter_irrelevant_endpoint(client, db, job_payload, job_payload_two):
+    relevant_payload = {
+        **job_payload,
+        "is_relevant": True,
+    }
+
+    irrelevant_payload = {
+        **job_payload_two,
+    }
+
+    client.post("/jobs/", json=relevant_payload)
+    client.post("/jobs/", json=irrelevant_payload)
+
+    response = client.get("/jobs/?is_relevant=false")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["is_relevant"] is False
+
+
+
+def test_list_jobs_filter_role_type_endpoint(client, db, job_payload):
+    frontend_payload = {
+        **job_payload,
+        "role_type": "frontend",
+    }
+
+    backend_payload = {
+        **job_payload,
+        "fingerprint": "b" * 64,
+        "role_type": "backend",
+    }
+
+    client.post("/jobs/", json=frontend_payload)
+    client.post("/jobs/", json=backend_payload)
+
+    response = client.get("/jobs/?role_type=frontend")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["role_type"] == "frontend"
+
+
+def test_list_jobs_filter_recommended_resume_endpoint(
+    client,
+    db,
+    job_payload,
+):
+    frontend_payload = {
+        **job_payload,
+        "recommended_resume": "frontend",
+    }
+
+    backend_payload = {
+        **job_payload,
+        "fingerprint": "b" * 64,
+        "recommended_resume": "backend",
+    }
+
+    client.post("/jobs/", json=frontend_payload)
+    client.post("/jobs/", json=backend_payload)
+
+    response = client.get("/jobs/?recommended_resume=frontend")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["recommended_resume"] == "frontend"
+
+
+def test_list_jobs_combo_filter_endpoint(
+    client,
+    db,
+    job_payload,
+    ):
+    frontend_payload = {
+        **job_payload,
+        "is_relevant": False,
+        "role_type": "frontend",
+        "recommended_resume": "frontend",
+    }
+
+    backend_payload = {
+        **job_payload,
+        "fingerprint": "b" * 64,
+        "is_relevant": True,
+        "role_type": "backend",
+        "recommended_resume": "backend",
+    }
+
+    client.post("/jobs/", json=frontend_payload)
+    client.post("/jobs/", json=backend_payload)
+
+    response = client.get("/jobs/?is_relevant=true&role_type=backend")
+
+    assert response.status_code == 200
+
+    data = response.json()
+    print('combo data', data)
+
+    assert len(data) == 1
+    assert data[0]["role_type"] == "backend"
+
+
+def test_create_job_endpoint_additional_fields(
+    client,
+    db,
+    job_payload,
+    ):
+
+    backend_payload = {
+        **job_payload,
+        "is_relevant": True,
+        "role_type": "frontend",
+        "recommended_resume": "frontend",
+    }
+
+    response = client.post("/jobs/", json=backend_payload)
+    assert response.status_code == 201
+
+    data = response.json()
+
+    assert data["role_type"] == backend_payload["role_type"]
+    assert data["recommended_resume"] == backend_payload["recommended_resume"]
+    assert data["is_relevant"] == backend_payload["is_relevant"]
+
+
+
 
 
 

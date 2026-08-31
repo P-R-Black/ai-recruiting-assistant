@@ -1,23 +1,27 @@
-1. Improve extraction quality
-✅ Remote / Hybrid / On-site
-✅ Employment type
-✅ Recruiter name
-✅ Company website
-✅ Better apply URL detection
+Frontend Milestone 1
+⬜ Set up the React frontend API layer
+⬜ Create TypeScript Job type based on JobResponse
+⬜ Create getJobs() API function
+⬜ Create basic Jobs page
+⬜ Fetch jobs from FastAPI
+⬜ Render jobs
+⬜ Display role_type
+⬜ Display recommended_resume
+⬜ Display is_relevant
+⬜ Add Relevant / Irrelevant / All filtering
+⬜ Add role-type filtering
+⬜ Add resume recommendation filtering
+⬜ Add loading state
+⬜ Add error state
+⬜ Add frontend tests
 
-2. Persist extracted jobs
-✅ Create a Job record from ExtractJob
-✅ ExtractJob produces structured data
-✅ Validate that data with a Pydantic extraction schema
-✅ Map the extraction result → JobCreate
-✅ Create the SQLAlchemy Job
-✅ Associate the Job with the source Email
-✅ Commit and return the created job
-✅ Test the mapping independently before integrating it into the email-import flow
-
-✅ Link the original email to the job
-✅ Avoid duplicate jobs
-✅ Link original Email → Job
+Then Milestone 2
+⬜ Job detail page
+⬜ Open original job_url
+⬜ Review classification
+⬜ Allow classification overrides
+⬜ Better job-card UI
+⬜ Pagination
 
 
 3. Confidence scoring
@@ -37,3 +41,18 @@
 ⬜ Eventually analyze job fit
 
 ✅
+
+Phase 2 | Backend
+3. Confidence scoring
+⬜ Field-level confidence
+
+4. Classification
+⬜ Interview invitation
+⬜ Application confirmation
+⬜ Rejection
+⬜ Job alert
+⬜ Recruiter outreach
+
+5. AI enrichment
+⬜ Enrich missing job fields
+⬜ Eventually analyze job fit

@@ -9,6 +9,9 @@ from app.jobs import crud
 from app.jobs.models import JobSource, JobStatus
 from app.jobs.schemas import JobCreate, JobResponse, JobStatusUpdate, JobUpdate
 from app.mail.models import WorkLocation
+from app.jobs.classifiers.role import JobRoleType, ResumeRecommendation
+
+
 
 router = APIRouter(
     prefix="/jobs",
@@ -37,6 +40,9 @@ def list_jobs_endpoint(
     salary_min: int | None = None,
     salary_max: int | None = None,
     salary_currency: str | None = None,
+    role_type: JobRoleType | None = None,
+    recommended_resume: ResumeRecommendation | None = None,
+    is_relevant: bool | None = None,
     
     ):
     return crud.list_jobs(
@@ -51,7 +57,11 @@ def list_jobs_endpoint(
         work_location=work_location, 
         salary_min=salary_min, 
         salary_max=salary_max, 
-        salary_currency=salary_currency)
+        salary_currency=salary_currency,
+        role_type=role_type,
+        recommended_resume=recommended_resume,
+        is_relevant=is_relevant,
+        )
 
 
 @router.get("/{job_id}", response_model=JobResponse)
@@ -89,6 +99,8 @@ def update_job_status_endpoint(
         raise HTTPException(status_code=404, detail="Job not found")
 
     return updated
+
+
 
 
 @router.delete("/{job_id}", status_code=204)
