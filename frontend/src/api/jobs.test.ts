@@ -65,4 +65,101 @@ describe("getJobs", () => {
             "Failed to fetch jobs",
         );
     });
+
+    it("filters jobs by relevance", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify([]), {
+                status: 200,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }),
+        );
+
+        await getJobs({
+            is_relevant: true,
+        });
+
+        expect(fetch).toHaveBeenCalledWith(
+            "http://127.0.0.1:8000/jobs/?is_relevant=true"
+        );
+    });
+
+    it("filters jobs by irrelevant jobs", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify([]), {
+                status: 200,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }),
+        );
+
+        await getJobs({
+            is_relevant: false,
+        });
+
+        expect(fetch).toHaveBeenCalledWith(
+            "http://127.0.0.1:8000/jobs/?is_relevant=false"
+        );
+    });
+
+    it("filters jobs by role type", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify([]), {
+                status: 200,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }),
+        );
+
+        await getJobs({
+            role_type: "frontend",
+        });
+
+        expect(fetch).toHaveBeenCalledWith(
+            "http://127.0.0.1:8000/jobs/?role_type=frontend"
+        );
+    });
+
+    it("filters jobs by recommended resume", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify([]), {
+                status: 200,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }),
+        );
+
+        await getJobs({
+            recommended_resume: "frontend",
+        });
+
+        expect(fetch).toHaveBeenCalledWith(
+            "http://127.0.0.1:8000/jobs/?recommended_resume=frontend"
+        );
+    });
+
+    it("filters jobs using multiple filters", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify([]), {
+                status: 200,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }),
+        );
+
+        await getJobs({
+            is_relevant: true,
+            role_type: "frontend",
+            recommended_resume: "frontend",
+        });
+
+        expect(fetch).toHaveBeenCalledWith(
+            "http://127.0.0.1:8000/jobs/?is_relevant=true&role_type=frontend&recommended_resume=frontend"
+        );
+    });
 })

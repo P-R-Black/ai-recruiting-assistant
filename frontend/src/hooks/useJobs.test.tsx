@@ -12,7 +12,7 @@ vi.mock("../api/jobs", () => ({
     getJobs: vi.fn(),
 }));
 
-const mockJobs = [
+const mockJobs: any = [
     {
         id: "1",
         title: "Frontend Developer",
@@ -93,24 +93,86 @@ describe("useJobs", () => {
             "Failed to fetch jobs"
         );
     });
+    it("passes filters to getJobs", async () => {
+        vi.mocked(getJobs).mockResolvedValue(mockJobs);
 
-    it("returns an error when getJobs fails", async () => {
-        vi.mocked(getJobs).mockRejectedValue(
-            new Error("Failed to fetch jobs")
-        );
+        const filters = {
+            is_relevant: true,
+        };
 
-        const { result } = renderHook(() => useJobs(), {
+        const { result } = renderHook(() => useJobs(filters), {
             wrapper: createWrapper(),
         });
 
         await waitFor(() => {
-            expect(result.current.isError).toBe(true);
+            expect(result.current.isSuccess).toBe(true);
         });
 
-        expect(result.current.error).toBeInstanceOf(Error);
-
-        expect(result.current.error?.message).toBe(
-            "Failed to fetch jobs"
-        );
+        expect(getJobs).toHaveBeenCalledWith(filters);
     });
+
+    it("refetches when filters change", async () => {
+        vi.mocked(getJobs).mockImplementation(async (filters) => {
+            if (filters.is_relevant === true) {
+                return mockJobs;
+            }
+
+            if (filters.is_relevant === false) {
+                return [];
+            }
+
+            return [];
+        });
+
+        const { result, rerender } = renderHook(
+            ({ filters }) => useJobs(filters),
+            {
+                initialProps: {
+                    filters: { is_relevant: true },
+                },
+                wrapper: createWrapper(),
+            }
+        );
+
+        await waitFor(() => {
+            expect(result.current.data).toEqual(mockJobs);
+        });
+
+        expect(getJobs).toHaveBeenCalledWith({
+            is_relevant: true,
+        });
+
+        rerender({
+            filters: { is_relevant: false },
+        });
+
+        await waitFor(() => {
+            expect(result.current.data).toEqual([]);
+        });
+
+        expect(getJobs).toHaveBeenCalledWith({
+            is_relevant: false,
+        });
+    });
+
+    it("passes multiple filters to getJobs", async () => {
+        vi.mocked(getJobs).mockResolvedValue(mockJobs);
+
+        const filters = {
+            is_relevant: true,
+            role_type: "frontend",
+            recommended_resume: "frontend",
+        };
+
+        const { result } = renderHook(() => useJobs(filters), {
+            wrapper: createWrapper(),
+        });
+
+        await waitFor(() => {
+            expect(result.current.isSuccess).toBe(true);
+        });
+
+        expect(getJobs).toHaveBeenCalledWith(filters);
+    });
+
 });

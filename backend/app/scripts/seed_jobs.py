@@ -51,3 +51,8 @@ def seed_glassdoor_jobs() -> None:
 
 if __name__ == "__main__":
     seed_glassdoor_jobs()
+
+
+"""
+uv run python -m app.scripts.seed_jobs
+"""

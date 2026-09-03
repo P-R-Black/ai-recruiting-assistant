@@ -24,6 +24,18 @@ export function JobCard({ job, }: JobCardProps) {
         "unknown": "Unknown",
     }
 
+    const ROLE_COLORS: Record<string, string> = {
+        "backend": "#10b981",
+        "frontend": "#f2ab1c",
+        "full_stack": "#f31515",
+        "non_software": "#090162",
+        "unknown": "#7f7d7d",
+    };
+
+
+
+
+
     const formatCurrency = (currency: string) => {
         if (!currency) {
             return "Not listed"
@@ -53,7 +65,7 @@ export function JobCard({ job, }: JobCardProps) {
             return text.slice(0, COMPANY_NAME_TEXT_LENGTH) + "..."
         }
 
-        return text
+        return text;
 
     }
 
@@ -98,18 +110,21 @@ export function JobCard({ job, }: JobCardProps) {
 
 
     return (
-        <article style={styles.cardBorder}>
-            <header>
+        <article style={{
+            ...styles.cardBorder, borderLeft: `7px solid ${job.recommended_resume ?
+                ROLE_COLORS[job.recommended_resume] : "Unknown"}`
+        }}>
+            <header style={styles.cardSectionDivider}>
                 <p style={styles.companyName}><span>🏢</span> {truncateCompanyName(job.company)}</p>
             </header>
             <section>
                 <h2 style={styles.cardJobTitle}>{truncateJobTitle(job.title)}</h2>
             </section>
-            <section style={styles.badgeSpacing}>
+            <section style={{ ...styles.badgeSpacing }}>
                 <span style={styles.badge}>Full Time</span>
                 <span style={styles.badge}>Hybrid/Remote</span>
             </section>
-
+            <div style={styles.cardSectionDivider}></div>
             <section style={styles.roleResumeBlock}>
                 <p style={styles.cardParagraphMarginReduction}><strong>Role:</strong>{" "}
                     {job.role_type ? roleTypes[job.role_type] : "Unknown"}
@@ -123,17 +138,21 @@ export function JobCard({ job, }: JobCardProps) {
                     {job.is_relevant ? "Yes" : "No"}
                 </p>
             </section>
+            <div style={styles.cardSectionDivider}></div>
             <footer style={styles.cardFooter}>
                 <div style={styles.salaryLocationBlock}>
                     <p style={styles.cardJobSalary}><span>💰</span> {formatSalary(job)}</p>
                     <p style={styles.cardLocation}><span>📍</span> {job.location ?? "Not Listed"}</p>
                 </div>
-                <a style={styles.cardButton}
-                    href={job.job_url}
-                    target="_blank"
-                    rel="noopener noreferrer">
-                    View Job
-                </a>
+                <div className="cardButtonContainer">
+                    <a style={styles.cardButton}
+                        className="cardButton"
+                        href={job.job_url}
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        View Job
+                    </a>
+                </div>
 
             </footer>
         </article>
@@ -144,41 +163,42 @@ export function JobCard({ job, }: JobCardProps) {
 
 const styles = {
     cardBorder: {
-
         alignItems: "flex-start",
-        border: "1px solid black",
+        background: "var(--off-primary)",
         borderRadius: "10px",
         display: "flex",
-        flexDirection: "column" as "column",
+        flexDirection: "column" as const,
         padding: "1rem 2rem",
-        width: "25%",
-
+        marginBottom: "2.2rem",
+        // minWidth: "10rem",
+        // maxWidth: "18rem",
     },
+
     companyName: {
-        color: "black",
-        fontSize: ".85rem",
+        color: "var(--primary-text)",
+        fontSize: ".80rem",
         fontWeight: "600",
         textAlign: "left" as "left",
-        marginBottom: ".5rem",
-
+        // marginBottom: ".5rem",
     },
 
     cardJobTitle: {
-        color: "black",
-        fontSize: "1.20rem",
-        fontWeight: "600",
         textAlign: "left" as "left",
         marginBottom: ".25rem",
 
     },
 
     badge: {
-        backgroundColor: "#E0E0E0",
-        display: "inline-block",
+        backgroundColor: "var(--highlight-text)",
+        borderRadius: "3px",
+        color: "var(--inverse-primary)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: ".70rem",
+        height: "1rem",
         padding: "0.05rem 0.50rem",
-        borderRadius: "5px",
-        color: "#000000",
-        fontSize: ".75rem",
+
     },
 
     badgeSpacing: {
@@ -190,36 +210,36 @@ const styles = {
     },
 
     roleResumeBlock: {
-        color: "#000000",
+        color: "var(--primary-text)",
         display: "flex",
-        flexDirection: "column" as "column",
+        flexDirection: "column" as const,
         fontSize: ".90rem",
-        // border: "2px solid green",
-        textAlign: "left" as 'left',
         marginBottom: ".5rem",
+        textAlign: "left" as 'left',
     },
 
     salaryLocationBlock: {
         display: "flex",
-        flexDirection: "column" as "column",
+        flexDirection: "column" as const,
 
     },
     cardFooter: {
+        alignItems: "center",
         display: "flex",
         justifyContent: "space-between",
-        alignItems: "center",
         width: "100%",
     },
 
     cardLocation: {
-        fontSize: ".80rem",
+        color: "var(--primary-text)",
+        fontSize: ".75rem",
         fontWeight: "400",
-        textAlign: "left" as "left"
+        textAlign: "left" as const
 
     },
 
     cardJobSalary: {
-        color: "black",
+        color: "var(--primary-text)",
         fontSize: ".85rem",
         fontWeight: "600",
         textAlign: "left" as "left",
@@ -228,16 +248,31 @@ const styles = {
     },
 
     cardButton: {
-        backgroundColor: "#000000",
-        color: "#ffffff",
-        padding: "0.05rem 0.50rem",
+        alignItems: "center",
+        backgroundColor: "var(--primary-text)",
         borderRadius: "5px",
+        color: "var(--secondary-text)",
+        display: "flex",
         fontSize: ".75rem",
-        textDecoration: "None"
+        height: ".90rem",
+        justifyContent: "center",
+        padding: "0.05rem 0.50rem",
+        textDecoration: "none",
+        width: "3.75rem",
+        zIndex: "1",
+
     },
+
+
 
     cardParagraphMarginReduction: {
         marginBottom: "-.25rem",
+    },
+
+    cardSectionDivider: {
+        borderBottom: "1px solid var(--highlight-text)",
+        marginBottom: ".5rem",
+        width: "100%"
     }
 
 

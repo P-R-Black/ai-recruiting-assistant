@@ -10,8 +10,8 @@ export function JobList({ jobs }: JobListProps) {
         <section style={styles.JobListLayout}>
             {jobs.map((job) => (
                 <JobCard
-                    key={job.id}
                     job={job}
+                    key={job.id}
                 />
             ))}
         </section>
@@ -20,11 +20,9 @@ export function JobList({ jobs }: JobListProps) {
 
 const styles = {
     JobListLayout: {
-
         display: "flex",
-        gap: "1rem",
-        flexWrap: "wrap",
+        justifyContent: "space-between",
+        flexWrap: "wrap" as const,
         maxWidth: "100vw",
-
     },
 }

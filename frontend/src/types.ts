@@ -35,3 +35,9 @@ export type Job = {
 export type JobCardProps = {
     job: Job;
 }
+
+export type JobFilters = {
+    is_relevant?: boolean;
+    role_type?: string;
+    recommended_resume?: string;
+}

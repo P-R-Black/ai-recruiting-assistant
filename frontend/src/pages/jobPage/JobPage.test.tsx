@@ -103,3 +103,5 @@ describe("JobsPage", () => {
         ).toBeInTheDocument();
     });
 });
+
+// npx vitest
