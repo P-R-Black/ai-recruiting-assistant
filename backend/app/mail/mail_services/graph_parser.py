@@ -1,8 +1,7 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 from app.mail.models import EmailProvider
 from app.mail.normalizer.base import ParsedEmail
-
 
 
 def build_parsed_email_from_graph_message(
