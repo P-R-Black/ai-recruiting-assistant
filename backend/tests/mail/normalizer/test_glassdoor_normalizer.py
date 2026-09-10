@@ -33,6 +33,7 @@ print("FIXTURES:", FIXTURES)
 # Uncomment when a new real email needs to be captured for testing.
 # This intentionally uses a live iCloud connection and should not
 # be part of the normal test suite.
+
 @pytest.fixture
 def icloud_connection():
     settings_obj = create_icloud_settings(
@@ -96,7 +97,7 @@ def test_glassdoor_normalizer():
     jobs = normalizer.normalize(parsed)
 
     print('jobs:', jobs)
-    # print('jobs:', jobs[0])
+
 
     assert len(jobs) == 10
     assert jobs[0].title == "IT Business Systems Developer"

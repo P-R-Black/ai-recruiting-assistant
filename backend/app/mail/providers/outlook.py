@@ -289,6 +289,11 @@ def normalize_outlook_message(message: dict) -> EmailCreate:
     Convert a Microsoft Graph message into the application's EmailCreate model.
     """
 
+    print('message:', message)
+    print('message.get("from"):', message.get("From", {}))
+    print('message.get("emailAddress"):', message.get("emailAddress", {}))
+    print('message.get("address"):', message.get("address", {}))
+
     sender = (
         message.get("from", {})
         .get("emailAddress", {})

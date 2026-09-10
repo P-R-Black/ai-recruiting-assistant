@@ -1,19 +1,21 @@
 Frontend Milestone 1
-⬜ Set up the React frontend API layer
-⬜ Create TypeScript Job type based on JobResponse
-⬜ Create getJobs() API function
-⬜ Create basic Jobs page
-⬜ Fetch jobs from FastAPI
-⬜ Render jobs
-⬜ Display role_type
-⬜ Display recommended_resume
-⬜ Display is_relevant
-⬜ Add Relevant / Irrelevant / All filtering
-⬜ Add role-type filtering
-⬜ Add resume recommendation filtering
-⬜ Add loading state
-⬜ Add error state
-⬜ Add frontend tests
+✅ Set up the React frontend API layer
+✅ Create TypeScript Job type based on JobResponse
+✅ Create getJobs() API function
+✅ Create basic Jobs page
+✅ Fetch jobs from FastAPI
+✅ Render jobs
+✅ Display role_type
+✅ Display recommended_resume
+✅ Display is_relevant
+✅ Add Relevant / Irrelevant / All filtering
+✅ Add role-type filtering
+✅ Add resume recommendation filtering
+✅ Add loading state
+✅ Add error state
+✅ Add frontend tests
+⬜ Delete reviewed job from frontend
+⬜ Delete processed email after successful ingestion
 
 Then Milestone 2
 ⬜ Job detail page

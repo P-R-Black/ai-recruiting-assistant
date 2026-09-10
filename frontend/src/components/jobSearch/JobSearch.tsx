@@ -1,12 +1,4 @@
-
-import type { CSSProperties } from "react";
-
 type JobSearchInputProps = {
-    value: string;
-    onChange: (value: string) => void;
-};
-
-type JobStatusFilterProps = {
     value: string;
     onChange: (value: string) => void;
 };

@@ -21,7 +21,7 @@ def parse_email(raw_email: bytes, provider: EmailProvider) -> EmailCreate:
 
 
     date = message.get("Date")
-
+    
     if date:
         received_at = parsedate_to_datetime(date)
 

@@ -1,39 +1,11 @@
 import type { JobCardProps, Job } from "../../types"
 
+import { ROLE_COLORS, roleTypes, resumeRecommendations } from "../../constants/constants"
+
 const COMPANY_NAME_TEXT_LENGTH = 31
 const JOB_TITLE_TEXT_LENGTH = 24
 
 export function JobCard({ job, }: JobCardProps) {
-
-
-    const roleTypes: Record<string, string> = {
-        "backend": "Backend",
-        "frontend": "Frontend",
-        "full_stack": "Full Stack",
-        "non_software": "Non Software",
-        "unknown": "Unknown",
-        "software": "Software Engineer",
-        "software_engineer": "Software Engineer",
-    }
-
-    const resumeRecommendations: Record<string, string> = {
-        "backend": "Backend",
-        "frontend": "Frontend",
-        "full_stack": "Full Stack",
-        "non_software": "Non Software",
-        "unknown": "Unknown",
-    }
-
-    const ROLE_COLORS: Record<string, string> = {
-        "backend": "#10b981",
-        "frontend": "#f2ab1c",
-        "full_stack": "#f31515",
-        "non_software": "#090162",
-        "unknown": "#7f7d7d",
-    };
-
-
-
 
 
     const formatCurrency = (currency: string) => {
@@ -107,12 +79,10 @@ export function JobCard({ job, }: JobCardProps) {
 
 
 
-
-
     return (
         <article style={{
-            ...styles.cardBorder, borderLeft: `7px solid ${job.recommended_resume ?
-                ROLE_COLORS[job.recommended_resume] : "Unknown"}`
+            ...styles.cardBorder, borderLeft: `7px solid ${job.role_type ?
+                ROLE_COLORS[job.role_type] : "Unknown"}`
         }}>
             <header style={styles.cardSectionDivider}>
                 <p style={styles.companyName}><span>🏢</span> {truncateCompanyName(job.company)}</p>
@@ -191,7 +161,7 @@ const styles = {
     badge: {
         backgroundColor: "var(--highlight-text)",
         borderRadius: "3px",
-        color: "var(--inverse-primary)",
+        color: "var(--inverse-secondary)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

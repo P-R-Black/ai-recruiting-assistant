@@ -27,8 +27,7 @@ def build_job_create_from_normalized(
         raise ValueError("Cannot create JobCreate: application URL was not extracted")
 
     salary = parse_salary(normalized.salary)
-
-    print('callin classification:', classification)
+    
     # classification = classify_job(normalized)
 
 

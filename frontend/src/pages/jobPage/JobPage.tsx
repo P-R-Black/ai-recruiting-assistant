@@ -2,33 +2,53 @@ import { JobList } from "./jobList/JobList";
 import { useJobs } from "../../hooks/useJobs";
 import { JobSearch } from "../../components/jobSearch/JobSearch";
 import { JobFilter } from "../../components/jobFilter/JobFilter";
+import { JobRelevanceFilter } from "../../components/jobRelevanceFilter/JobRelevanceFilter";
+import { JobResumeFilter } from "../../components/jobResumeFilter/JobResumeFilter";
+import { SummaryPanel } from "../../components/summaryPanel/SummaryPanel";
 import { useState, useMemo } from "react";
+
 
 export function JobsPage() {
     const [search, setSearch] = useState<string>("");
-    const [jobFilter, setJobFilter] = useState<string>("all");
+    const [roleType, setRoleType] = useState<string>("all");
+    const [relevance, setRelevance] = useState<string>("all");
+    const [recommendedResume, setRecommendedResume] = useState<string>("all");
+
+    const filters = {
+        ...(roleType !== "all" && {
+            role_type: roleType,
+        }),
+
+        ...(relevance !== "all" && {
+            is_relevant: relevance == "relevant",
+        }),
+
+        ...(recommendedResume !== "all" && {
+            recommended_resume: recommendedResume
+        })
+    };
+
 
     const {
         data: jobs,
         isLoading,
         isError,
         error
-    } = useJobs()
+    } = useJobs(filters)
 
     const filteredJobs = useMemo(() => {
         const q = search.trim().toLowerCase();
-        console.log('q:', q)
+
         return (jobs ?? []).filter((job) => {
 
             const matchesSearch =
                 !q ||
                 job.title.toLowerCase().includes(q)
 
-            const matchesFilter = jobFilter === "all" || job.role_type === jobFilter;
-            return matchesSearch && matchesFilter;
+            return matchesSearch;
 
         });
-    }, [search, jobFilter, jobs]);
+    }, [search, jobs]);
 
 
     if (isLoading) {
@@ -44,19 +64,34 @@ export function JobsPage() {
     }
 
     if (!jobs || jobs.length === 0) {
-        return <p>No jobs found.</p>;
+        return (
+            <main style={styles.jobsPageStyle} >
+                <h1 style={styles.pageH1Styles}>No jobs found</h1>
+                <div style={styles.summaryContainer} aria-label="Job summary" role="region">
+                    <SummaryPanel jobs={filteredJobs} />
+                </div>
+                <div style={styles.controls}>
+                    <JobSearch value={search} onChange={setSearch} />
+                    <JobFilter value={roleType} onChange={setRoleType} ariaLabel={"Role"} />
+                    <JobRelevanceFilter value={relevance} onChange={setRelevance} ariaLabel={"Relevance"} />
+                    <JobResumeFilter value={recommendedResume} onChange={setRecommendedResume} ariaLabel={"Resume"} />
+                </div>
+            </main >
+        );
     }
-
-
-
 
 
     return (
         <main style={styles.jobsPageStyle}>
             <h1 style={styles.pageH1Styles}>Jobs</h1>
+            <div style={styles.summaryContainer} aria-label="Job summary" role="region">
+                <SummaryPanel jobs={filteredJobs} />
+            </div>
             <div style={styles.controls}>
                 <JobSearch value={search} onChange={setSearch} />
-                <JobFilter value={jobFilter} onChange={setJobFilter} />
+                <JobFilter value={roleType} onChange={setRoleType} ariaLabel={"Role"} />
+                <JobRelevanceFilter value={relevance} onChange={setRelevance} ariaLabel={"Relevance"} />
+                <JobResumeFilter value={recommendedResume} onChange={setRecommendedResume} ariaLabel={"Resume"} />
             </div>
             <JobList jobs={filteredJobs} />
         </main>
@@ -70,8 +105,13 @@ const styles = {
         justifyContent: "center" as const,
         display: "flex" as const,
         flexDirection: "column" as const,
+    },
 
-        // border: "2px solid blue",
+    summaryContainer: {
+        display: "flex",
+        justifyContent: "space-between",
+        width: "100%",
+        marginBottom: 20,
     },
 
     pageH1Styles: {
@@ -83,13 +123,8 @@ const styles = {
 
     controls: {
         display: "flex",
-        // gap: 12,
         marginBottom: 16,
-        // flexWrap: "wrap",
         width: "100%",
-        // justifyContent: "space-between",
-
-        // border: "2px solid red",
 
     }
 } as const;

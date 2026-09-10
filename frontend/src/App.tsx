@@ -2,7 +2,7 @@ import { JobsPage } from "./pages/jobPage/JobPage";
 
 
 function App() {
-    return <JobsPage />;
+    return (<JobsPage />);
 }
 
 export default App;

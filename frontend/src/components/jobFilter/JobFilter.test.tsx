@@ -114,4 +114,32 @@ describe("JobFilter", () => {
 
         expect(onChange).toHaveBeenCalledWith("non_software");
     });
+
+    it("uses the provided aria label", () => {
+        render(
+            <JobFilter
+                value="all"
+                onChange={() => { }}
+                ariaLabel="Role"
+            />
+        );
+
+        expect(
+            screen.getByRole("combobox", { name: "Role" })
+        ).toBeInTheDocument();
+    });
+
+    it("uses the provided aria label for different filter types", () => {
+        render(
+            <JobFilter
+                value="all"
+                onChange={() => { }}
+                ariaLabel="Relevance"
+            />
+        );
+
+        expect(
+            screen.getByRole("combobox", { name: "Relevance" })
+        ).toBeInTheDocument();
+    });
 });

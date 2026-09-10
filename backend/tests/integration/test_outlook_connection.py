@@ -51,8 +51,6 @@ def test_graph_headers(outlook_token):
 def test_fetch_outlook_messages(outlook_token):
 
     # Fetch messages from the inbox
- 
-    # messages = fetch_outlook_messages(outlook_token, top=5, max_results=5)
 
     headers = graph_headers(outlook_token)
     folder_name = 'Inbox'
@@ -60,23 +58,28 @@ def test_fetch_outlook_messages(outlook_token):
     folder_id = target_folder['id']
 
     messages = fetch_outlook_messages(outlook_token, folder_id=folder_id, top=5, max_results=5)
+    # print(f'messages: {messages[0]}')
 
     assert messages is not None
     assert len(messages) > 0
-    
+
+   
     # for message in messages:
-    #     print('Subject:', message['subject'])
-    #     print("To:", message['toRecipients'])
-    #     print(
-    #         "From", message['from']['emailAddress']['name'], 
-    #         f"({message['from']['emailAddress']['address']})"
-    #         )
-    #     print("Is Read:", message['isRead'])
-    #     # Print first 100 characters of the body
-    #     # print("Body:", message['body']['content'][:100], '...') 
-    #     print("Body Preview:", message['bodyPreview'][:400], '...')  #
-    #     print("Received Date Time:", message['receivedDateTime'])
-    #     print('-' * 50)
+        # print('Subject:', message['subject'])
+        # print("To:", message['toRecipients'])
+        # print(
+        #     "From", message['from']['emailAddress']['name'], 
+        #     f"({message['from']['emailAddress']['address']})"
+        #     )
+        # print("Is Read:", message['isRead'])
+        # Print first 100 characters of the body
+        # print("Body:", message['body']['content'][:100], '...') 
+        # print("Body Preview:", message['bodyPreview'][:400], '...')
+        #print("Body:", message['body']['content'], '...') 
+        # pprint("Body:", message['body']['content'], '...') 
+        # print("Received Date Time:", message['receivedDateTime'])
+        # print('-' * 50)
+
 
 
     
