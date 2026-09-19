@@ -1,44 +1,31 @@
-from sqlalchemy.orm import Session
-
 import logging
 
+from sqlalchemy.orm import Session
+
 from app.jobs.jobs_services.service import persist_normalized_jobs
-
+from app.mail.connectors.imap_connector import connect_imap
+from app.mail.connectors.outlook_connector import create_outlook_settings
+from app.mail.filters.job_board_filter import identify_job_board
+from app.mail.mail_services.deleters.mail_deleter import delete_email
+from app.mail.mail_services.parsers.graph_parser import build_parsed_email_from_graph_message
+from app.mail.mail_services.parsers.mime_parser import build_parsed_email
 from app.mail.models import EmailProvider
-
 from app.mail.normalizer.base import ParsedEmail
 from app.mail.normalizer.glassdoor import GlassdoorNormalizer
-from app.mail.normalizer.linkedin import LinkedInNormalizer
 from app.mail.normalizer.indeed import IndeedNormalizer
+from app.mail.normalizer.linkedin import LinkedInNormalizer
 from app.mail.normalizer.zip_recruiter import ZipRecruiterNormalizer
-
-from app.mail.mail_services.parsers.mime_parser import build_parsed_email
-from app.mail.mail_services.parsers.graph_parser import build_parsed_email_from_graph_message
-
-from app.mail.filters.job_board_filter import (
-    is_job_board_email, 
-    identify_job_board
-    )
-
-from app.mail.mail_services.deleters.mail_deleter import delete_email
-from app.mail.mail_services.parsers.parser import parse_email
-
-from app.mail.connectors.outlook_connector import create_outlook_settings
-from app.mail.providers.outlook import (
-    connect_outlook, 
-    fetch_outlook_messages,
-    search_folder, 
-    graph_headers)
-
-
 from app.mail.providers.icloud import (
     create_icloud_settings,
-    fetch_imap_message, 
-    fetch_imap_messages, 
-    search_imap_messages)
-
-from app.mail.connectors.imap_connector import connect_imap
-
+    fetch_imap_message,
+    search_imap_messages,
+)
+from app.mail.providers.outlook import (
+    connect_outlook,
+    fetch_outlook_messages,
+    graph_headers,
+    search_folder,
+)
 
 JOB_BOARD_PARSERS = {
     "glassdoor": GlassdoorNormalizer(),

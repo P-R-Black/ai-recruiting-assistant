@@ -1,5 +1,6 @@
-from app.mail.normalizer.base import ParsedEmail
 from email.utils import parseaddr
+
+from app.mail.normalizer.base import ParsedEmail
 
 KNOWN_JOB_BOARDS: dict[str, str] = {
     "glassdoor.com": "glassdoor",

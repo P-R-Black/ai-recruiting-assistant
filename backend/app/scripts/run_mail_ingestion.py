@@ -1,8 +1,8 @@
-from app.core.config import settings
 import logging
 
-from app.orchestrator.orchestrator import run_mail_ingestion
+from app.core.config import settings
 from app.core.database import SessionLocal
+from app.orchestrator.orchestrator import run_mail_ingestion
 
 logger = logging.getLogger(__name__)
 

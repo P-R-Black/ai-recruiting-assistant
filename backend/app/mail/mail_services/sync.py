@@ -3,14 +3,7 @@ from venv import logger
 from sqlalchemy.orm import Session
 
 from app.mail.mail_services.importers.importer import import_emails
-
-
 from app.mail.models import EmailProvider
-from app.mail.providers.icloud import (
-    fetch_icloud_messages,
-    fetch_imap_messages
-    )
-
 from app.mail.providers.icloud import fetch_imap_messages
 from app.mail.providers.outlook import fetch_outlook_messages
 

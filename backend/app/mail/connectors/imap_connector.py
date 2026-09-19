@@ -1,10 +1,6 @@
 import imaplib
 
-from sqlalchemy.orm import Session
-
-
 from app.mail.mail_services.service import IMAPSettings
-
 
 # ----------------------------
 # IMAP

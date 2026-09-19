@@ -1,17 +1,17 @@
-import requests
-import httpx
-
 from pathlib import Path
 
+import httpx
+
 from app.core.config import BASE_DIR
+from app.mail.connectors.outlook_connector import (
+    MissingRefreshTokenError,
+    create_outlook_client,
+    load_refresh_token,
+    save_refresh_token,
+)
 from app.mail.mail_services.service import OutlookSettings
 from app.mail.models import EmailProvider
 from app.mail.schemas import EmailCreate
-
-from app.mail.connectors.outlook_connector import (
-    MissingRefreshTokenError, save_refresh_token, create_outlook_client, 
-    create_outlook_settings, load_refresh_token, 
-)
 
 REFRESH_TOKEN_PATH = Path("refresh_token.txt")
 

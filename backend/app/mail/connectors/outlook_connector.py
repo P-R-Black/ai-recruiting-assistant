@@ -1,11 +1,10 @@
 from pathlib import Path
-import requests
 
 import msal
 
 from app.core.config import BASE_DIR
-from app.mail.models import EmailProvider
 from app.mail.mail_services.service import OutlookSettings
+from app.mail.models import EmailProvider
 
 REFRESH_TOKEN_PATH = Path("refresh_token.txt")
 

@@ -2,12 +2,11 @@ import imaplib
 
 from sqlalchemy.orm import Session
 
+from app.mail.connectors.imap_connector import connect_imap
 from app.mail.mail_services.importers.importer import import_email
 from app.mail.mail_services.parsers.parser import parse_email
-from app.mail.connectors.imap_connector import connect_imap
-
 from app.mail.mail_services.service import IMAPSettings
-from app.mail.models import EmailProvider, Email
+from app.mail.models import Email, EmailProvider
 
 # ----------------------------
 # iCloud API

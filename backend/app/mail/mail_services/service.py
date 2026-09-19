@@ -13,8 +13,6 @@ from app.constants.keyword_list import (
 )
 from app.mail.crud import create_email, get_email_by_message_id
 from app.mail.mappers.job_email import build_email_create_from_normalized
-
-
 from app.mail.models import Email, EmailProvider, EmploymentType, WorkLocation
 from app.mail.normalizer.base import NormalizedJob
 

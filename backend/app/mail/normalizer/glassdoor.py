@@ -1,9 +1,6 @@
-import email
-from email.utils import parseaddr
 
 from bs4 import BeautifulSoup
 
-from app.mail.mail_services.parsers.mime_parser import get_html_from_raw_email
 from app.mail.normalizer.base import BaseEmailNormalizer, NormalizedJob, ParsedEmail, email_metadata
 
 

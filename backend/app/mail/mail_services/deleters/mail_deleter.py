@@ -1,8 +1,7 @@
 
+from app.mail.models import EmailProvider
 from app.mail.providers.icloud import delete_imap_message
 from app.mail.providers.outlook import delete_outlook_message
-
-from app.mail.models import EmailProvider
 
 
 def delete_email(
