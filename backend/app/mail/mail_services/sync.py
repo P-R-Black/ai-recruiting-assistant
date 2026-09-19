@@ -2,17 +2,25 @@ from venv import logger
 
 from sqlalchemy.orm import Session
 
-from app.mail.mail_services.importer import import_emails
+from app.mail.mail_services.importers.importer import import_emails
 
-# from app.mail.providers.gmail import fetch_gmail_messages
+
 from app.mail.models import EmailProvider
-from app.mail.providers.icloud import fetch_icloud_messages
+from app.mail.providers.icloud import (
+    fetch_icloud_messages,
+    fetch_imap_messages
+    )
+
+from app.mail.providers.icloud import fetch_imap_messages
 from app.mail.providers.outlook import fetch_outlook_messages
 
 
 def fetch_messages(provider, settings):
+    # if provider == EmailProvider.ICLOUD:
+    #     return fetch_icloud_messages(settings)
+
     if provider == EmailProvider.ICLOUD:
-        return fetch_icloud_messages(settings)
+        return fetch_imap_messages(settings)
 
     if provider == EmailProvider.OUTLOOK:
         return fetch_outlook_messages(settings)

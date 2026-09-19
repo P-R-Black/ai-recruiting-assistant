@@ -8,8 +8,8 @@ from app.mail.normalizer.glassdoor import (
     identify_job_board)
 
 from app.mail.normalizer.zip_recruiter import extract_ziprecruiter_jobs
-from app.mail.mail_services.mime_parser import build_parsed_email
-from app.mail.mail_services.detector import detect_job_email
+from app.mail.mail_services.parsers.mime_parser import build_parsed_email
+from app.mail.mail_services.detectors.detector import detect_job_email
 from app.mail.connectors.imap_connector import (
     connect_imap, 
     fetch_message, 
@@ -20,7 +20,7 @@ from app.mail.models import EmailProvider
 from app.mail.normalizer.zip_recruiter import ZipRecruiterNormalizer
 from app.mail.normalizer.base import ParsedEmail
 
-from app.mail.mail_services.parser import parse_email
+from app.mail.mail_services.parsers.parser import parse_email
 from app.mail.providers.icloud import create_icloud_settings
 
 
@@ -88,9 +88,6 @@ def test_indeed_normalizer():
     normalizer = ZipRecruiterNormalizer()
 
     jobs = normalizer.normalize(parsed)
-
-    print('jobs:', jobs[0])
-    print('len(jobs):', len(jobs))
 
     assert len(jobs) == 26
     assert jobs[0].title == "Website Designer"

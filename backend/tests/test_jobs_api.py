@@ -291,7 +291,6 @@ def test_list_jobs_combo_filter_endpoint(
     assert response.status_code == 200
 
     data = response.json()
-    print('combo data', data)
 
     assert len(data) == 1
     assert data[0]["role_type"] == "backend"

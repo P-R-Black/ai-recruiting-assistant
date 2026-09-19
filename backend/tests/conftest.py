@@ -86,8 +86,6 @@ def job_payload_two():
 def db() -> Session:
     session = SessionLocal()
 
-    print("DATABASE:", session.bind.url)
-
     session.query(Job).delete()
     session.query(Email).delete()
     session.commit()

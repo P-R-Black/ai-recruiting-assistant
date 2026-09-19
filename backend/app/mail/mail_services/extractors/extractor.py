@@ -230,7 +230,6 @@ def extract_recruiter_name(text: str) -> ExtractedValue:
     lines = get_clean_lines(text)
 
     for index in range(len(lines) -1, -1, -1):
-        print('index', index, 'lines[index]', lines[index])
         if looks_like_recruiter_title(lines[index]):
             if index > 0:
                 candidate = lines[index - 1]

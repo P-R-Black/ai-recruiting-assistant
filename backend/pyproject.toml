@@ -19,7 +19,12 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pytest", "httpx", "ruff"]
+dev = [
+    "pytest",
+    "httpx",
+    "ruff",
+    "pytest-mock>=3.15.1",
+]
 
 [tool.ruff]
 line-length = 100

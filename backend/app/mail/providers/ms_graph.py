@@ -101,14 +101,12 @@ def extract_html_from_email(email_file_path):
     return html_content
 
 def parse_html_content(html_str):
-    print('parse_html_content called')
+    
     if not html_str:
         return "No HTML content found in this email."
         
     # 3. Parse the HTML using Beautiful Soup
-    soup = BeautifulSoup(html_str, 'html.parser')
-    print('DEBUG soup:', soup)
-    
+    soup = BeautifulSoup(html_str, 'html.parser')  
     
     # Example A: Extract all visible plain text cleanly
     plain_text = soup.get_text(separator=' ', strip=True)

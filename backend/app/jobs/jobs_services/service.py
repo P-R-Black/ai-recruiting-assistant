@@ -9,7 +9,7 @@ from app.jobs.jobs_services.deduplication import (
 )
 from app.jobs.mappers.job_email import build_job_create, build_job_create_from_normalized
 from app.jobs.models import Job, JobSource
-from app.mail.mail_services.extractor import extract_job_information
+from app.mail.mail_services.extractors.extractor import extract_job_information
 from app.mail.mail_services.service import persist_normalized_email
 from app.mail.models import Email
 from app.mail.normalizer.base import NormalizedJob
@@ -27,7 +27,7 @@ def persist_normalized_jobs(
 
     email = persist_normalized_email(db, jobs)
    
-    
+
 
     if email is None:
         return []
@@ -41,7 +41,7 @@ def persist_normalized_jobs(
 
         if job_exists_by_fingerprint(db, fingerprint):
             continue
-
+        
         job_data = build_job_create_from_normalized(
             normalized,
             fingerprint=fingerprint,
@@ -91,10 +91,6 @@ def create_job_from_email(
     db: Session,
     email: Email,
     ) -> Job | None:
-
-    # going to add a fuction here to see if dup first
-    # if is_duplicate_job_email(db, email):
-    #     return None
 
 
     extracted = extract_job_information(email)

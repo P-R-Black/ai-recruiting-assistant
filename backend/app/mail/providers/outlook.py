@@ -1,16 +1,17 @@
-from pathlib import Path
-
+import requests
 import httpx
-import msal
+
+from pathlib import Path
 
 from app.core.config import BASE_DIR
 from app.mail.mail_services.service import OutlookSettings
 from app.mail.models import EmailProvider
 from app.mail.schemas import EmailCreate
 
-# ----------------------------
-# Outlook API
-# ----------------------------
+from app.mail.connectors.outlook_connector import (
+    MissingRefreshTokenError, save_refresh_token, create_outlook_client, 
+    create_outlook_settings, load_refresh_token, 
+)
 
 REFRESH_TOKEN_PATH = Path("refresh_token.txt")
 
@@ -22,72 +23,9 @@ REFRESH_TOKEN_PATH = TOKEN_DIRECTORY / "outlook_refresh_token.txt"
 MS_GRAPH_BASE_URL = "https://graph.microsoft.com/v1.0"
 
 
-class MissingRefreshTokenError(RuntimeError):
-    """
-    Raised when an Outlook refresh token cannot be found.
-
-    This exception indicates that Outlook authentication cannot continue
-    without interactive user authorization. Callers may catch this
-    exception to skip Outlook-related operations in non-interactive
-    environments such as automated tests or CI.
-    """
-
-    def __init__(
-        self,
-        message: str = (
-            "No Outlook refresh token was found. "
-            "Interactive authentication is required."
-        ),
-    ):
-        super().__init__(message)
-
-
-def create_outlook_settings(application_id, client_secret) -> OutlookSettings:
-    return OutlookSettings(
-        application_id=application_id,
-        client_secret=client_secret,
-        tenant_id="consumers",
-        authority="https://login.microsoftonline.com/consumers/",
-        provider=EmailProvider.OUTLOOK
-
-    )
-
-def create_outlook_client(settings: OutlookSettings):
-
-    client = msal.ConfidentialClientApplication(
-        client_id=settings.application_id,
-        client_credential=settings.client_secret,
-        authority="https://login.microsoftonline.com/consumers/",
-
-    )
-
-    return client
-
-
-def load_refresh_token():
-    """
-    Load a previously saved Outlook refresh token.
-
-    Returns:
-        The refresh token if it exists, otherwise None.
-    """
-    if not REFRESH_TOKEN_PATH.exists():
-        return None
-
-    token = REFRESH_TOKEN_PATH.read_text().strip()
-
-    return token or None
-
-
-def save_refresh_token(refresh_token):
-    """
-    Save the Outlook refresh token to a file.
-
-    Args:
-        refresh_token (str): The refresh token to save.
-    """
-    REFRESH_TOKEN_PATH.write_text(refresh_token)
-
+# ----------------------------
+# Outlook API
+# ----------------------------
 
 def get_outlook_access_token(
     settings: OutlookSettings,
@@ -113,52 +51,6 @@ def get_outlook_access_token(
         refresh_token,
         scopes=scopes,
     )
-
-    
-
-# def get_outlook_access_token(settings: OutlookSettings, scopes: list[str]):
-#     """
-#     Get an access token for Microsoft Outlook using the MSAL library.
-
-#     Args:
-#         application_id (str): The application ID (client ID) of your Azure AD app.
-#         client_secret (str): The client secret of your Azure AD app.
-#         scopes (list): A list of scopes for which the access token is requested.
-
-#     Returns:
-#         str: The access token.
-#     """
-#     client = create_outlook_client(settings)
-
-#     # check if there is a refresh token stored
-#     refresh_token = load_refresh_token()
-
-#     if refresh_token:
-#         # Try to acquire a new access token using the refresh token
-#         token_response = client.acquire_token_by_refresh_token(refresh_token, scopes=scopes)
-#     else:
-#         # No refresh token, proceed with the authorization code flow
-#         auth_request_url = client.get_authorization_request_url(scopes)
-#         webbrowser.open(auth_request_url)
-#         authorization_code = input("Enter the authorization code: ")
-
-#         if not authorization_code:
-#             raise ValueError("Authorization code is empty")
-
-#         token_response = client.acquire_token_by_authorization_code(
-#             code=authorization_code,
-#             scopes=scopes
-#         )
-
-
-#     if "refresh_token" in token_response:
-#         save_refresh_token(token_response["refresh_token"])
-
-#     if 'access_token' in token_response:
-#         return token_response['access_token']
-#     else:
-#         raise Exception('Failed to acquire access token: ' + str(token_response))
-
 
 
 
@@ -191,16 +83,6 @@ def connect_outlook(
 
     return access_token
 
-# def connect_outlook(settings: OutlookSettings) -> str:
-#     return get_outlook_access_token(
-#         settings=settings, 
-        # scopes=[
-        #     "User.Read", 
-        #     "Mail.ReadWrite", 
-        #     "Mail.Send",
-        #     ],
-#         )
-    
 
 
 def fetch_outlook_messages(
@@ -263,7 +145,6 @@ def fetch_outlook_messages(
 
 
 
-
 def search_folder(headers, folder_name='drafts'):
     endpoint = f"{MS_GRAPH_BASE_URL}/me/mailFolders"
     response = httpx.get(endpoint, headers=headers)
@@ -283,16 +164,11 @@ def get_sub_folders(headers, folder_id):
 
 
 
-
 def normalize_outlook_message(message: dict) -> EmailCreate:
     """
     Convert a Microsoft Graph message into the application's EmailCreate model.
     """
 
-    print('message:', message)
-    print('message.get("from"):', message.get("From", {}))
-    print('message.get("emailAddress"):', message.get("emailAddress", {}))
-    print('message.get("address"):', message.get("address", {}))
 
     sender = (
         message.get("from", {})
@@ -314,6 +190,67 @@ def normalize_outlook_message(message: dict) -> EmailCreate:
         raw_body=message.get("bodyPreview", ""),
         received_at=message.get("receivedDateTime"),
     )
+
+
+
+def delete_outlook_message(
+    headers: dict[str, str],
+    message_id: str,
+        ) -> None:
+
+  
+    endpoint = f"{MS_GRAPH_BASE_URL}/me/messages/{message_id}"
+    response = httpx.delete(endpoint, headers=headers, timeout=30)
+    response.raise_for_status()
+
+
+
+
+
+
+# def get_outlook_access_token(settings: OutlookSettings, scopes: list[str]):
+#     """
+#     Get an access token for Microsoft Outlook using the MSAL library.
+
+#     Args:
+#         application_id (str): The application ID (client ID) of your Azure AD app.
+#         client_secret (str): The client secret of your Azure AD app.
+#         scopes (list): A list of scopes for which the access token is requested.
+
+#     Returns:
+#         str: The access token.
+#     """
+#     client = create_outlook_client(settings)
+
+#     # check if there is a refresh token stored
+#     refresh_token = load_refresh_token()
+
+#     if refresh_token:
+#         # Try to acquire a new access token using the refresh token
+#         token_response = client.acquire_token_by_refresh_token(refresh_token, scopes=scopes)
+#     else:
+#         # No refresh token, proceed with the authorization code flow
+#         auth_request_url = client.get_authorization_request_url(scopes)
+#         webbrowser.open(auth_request_url)
+#         authorization_code = input("Enter the authorization code: ")
+
+#         if not authorization_code:
+#             raise ValueError("Authorization code is empty")
+
+#         token_response = client.acquire_token_by_authorization_code(
+#             code=authorization_code,
+#             scopes=scopes
+#         )
+
+
+#     if "refresh_token" in token_response:
+#         save_refresh_token(token_response["refresh_token"])
+
+#     if 'access_token' in token_response:
+#         return token_response['access_token']
+#     else:
+#         raise Exception('Failed to acquire access token: ' + str(token_response))
+
 
 
 

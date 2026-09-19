@@ -2,7 +2,7 @@ import pytest
 
 from datetime import datetime, timezone
 
-from app.mail.mail_services.extractor import (
+from app.mail.mail_services.extractors.extractor import (
     extract_apply_url,
     extract_company_name,
     extract_job_information,
@@ -290,6 +290,36 @@ def test_parse_pound_salary():
     assert result.salary_min == 60000
     assert result.salary_max is None
     assert result.currency == "GBP"
+
+def test_parse_salary_range_with_k_suffix():
+    result = parse_salary("$50K - $95K / yr")
+
+    assert result.salary_min == 50_000
+    assert result.salary_max == 95_000
+    assert result.currency == "USD"
+
+
+def test_parse_salary_range_with_comma_and_k_suffix():
+    result = parse_salary("$1,000 - $95K / yr")
+
+    assert result.salary_min == 1_000
+    assert result.salary_max == 95_000
+    assert result.currency == "USD"
+
+
+def test_parse_salary_single_value_with_k_suffix():
+    result = parse_salary("$95K / yr")
+
+    assert result.salary_min == 95_000
+    assert result.salary_max is None
+    assert result.currency == "USD"
+
+
+def test_parse_salary_range_with_m_suffix():
+    result = parse_salary("$1M - $2M")
+
+    assert result.salary_min == 1_000_000
+    assert result.salary_max == 2_000_000
 
 
 def test_extract_company_name():

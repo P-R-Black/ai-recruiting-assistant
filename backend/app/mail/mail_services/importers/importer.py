@@ -18,7 +18,7 @@ def import_email(db: Session, email: EmailCreate):
     """
     Imports a single email if it doesn't already exist.
     """
-
+   
     existing = crud.get_email_by_message_id(db, email.message_id)
 
     if existing:

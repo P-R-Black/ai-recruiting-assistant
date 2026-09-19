@@ -11,7 +11,7 @@ from app.jobs.jobs_services.service import (
 
 
 
-from app.mail.mail_services.mime_parser import build_parsed_email
+from app.mail.mail_services.parsers.mime_parser import build_parsed_email
 from app.mail.models import EmailProvider
 
 from app.mail.normalizer.base import NormalizedJob

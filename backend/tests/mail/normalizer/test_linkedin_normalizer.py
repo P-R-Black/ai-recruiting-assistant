@@ -5,18 +5,19 @@ from datetime import datetime, timezone
 from app.core.config import settings
 
 from app.mail.normalizer.glassdoor import (
-    extract_glassdoor_jobs,
-    identify_job_board)
+    extract_glassdoor_jobs)
 
-from app.mail.mail_services.mime_parser import build_parsed_email
-from app.mail.mail_services.detector import detect_job_email
-from app.mail.connectors.imap_connector import (
-    connect_imap, 
-    fetch_message, 
-    search_messages, 
+from app.mail.mail_services.parsers.mime_parser import build_parsed_email
+from app.mail.mail_services.detectors.detector import detect_job_email
+from app.mail.connectors.imap_connector import connect_imap
+
+
+from app.mail.providers.icloud import (
+    fetch_imap_message, 
+    search_imap_messages, 
     fetch_imap_messages)
+
 from app.mail.models import EmailProvider
-from app.mail.mail_services.parser import parse_email
 
 from app.mail.normalizer.linkedin import LinkedInNormalizer
 from app.mail.normalizer.base import ParsedEmail
@@ -24,7 +25,7 @@ from email.message import EmailMessage
 
 from contextlib import contextmanager
 
-from app.mail.mail_services.graph_parser import build_parsed_email_from_graph_message
+from app.mail.mail_services.parsers.graph_parser import build_parsed_email_from_graph_message
 
 
 # from app.mail.outlook import connect_outlook
@@ -40,7 +41,6 @@ from app.mail.providers.outlook import (
 
 
 FIXTURES = Path(__file__).parent / "fixtures" / "emails"
-print("FIXTURES:", FIXTURES)
 
 def load_email_fixture(name: str) -> bytes:
     return (FIXTURES / name).read_bytes()

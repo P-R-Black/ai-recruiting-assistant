@@ -8,19 +8,20 @@ from app.mail.normalizer.glassdoor import (
     identify_job_board)
 
 from app.mail.normalizer.indeed import extract_indeed_jobs
-from app.mail.mail_services.mime_parser import build_parsed_email
-from app.mail.mail_services.detector import detect_job_email
-from app.mail.connectors.imap_connector import (
-    connect_imap, 
-    fetch_message, 
-    search_messages, 
+from app.mail.mail_services.parsers.mime_parser import build_parsed_email
+from app.mail.mail_services.detectors.detector import detect_job_email
+from app.mail.connectors.imap_connector import connect_imap
+
+from app.mail.providers.icloud import (
+    fetch_imap_message, 
+    search_imap_messages, 
     fetch_imap_messages)
 
 from app.mail.models import EmailProvider
 from app.mail.normalizer.indeed import IndeedNormalizer
 from app.mail.normalizer.base import ParsedEmail
 
-from app.mail.mail_services.parser import parse_email
+from backend.app.mail.mail_services.parsers.parser import parse_email
 from app.mail.providers.icloud import create_icloud_settings
 
 
@@ -50,7 +51,7 @@ FIXTURES = Path(__file__).parent / "fixtures" / "emails"
 
 
 # def test_to_get_raw_email_data(icloud_connection):
-#     ids = search_messages(icloud_connection)
+#     ids = search_imap_messages(icloud_connection)
 #     # print('ids:',ids)
     
 #     # Remembe to run first and get Id for target email and update id (b'2351') """
@@ -93,8 +94,6 @@ def test_indeed_normalizer():
 
     jobs = normalizer.normalize(parsed)
 
-    print('jobs:', jobs[0])
-    print('len(jobs):', len(jobs))
 
     assert len(jobs) == 4
     assert jobs[0].title == "Software Engineer"

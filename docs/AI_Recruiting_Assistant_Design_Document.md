@@ -40,7 +40,7 @@ Future: - Any software engineer searching for jobs
 
 ``` text
                     +----------------+
-                    | Gmail API      |
+                    | Email API      |
                     +-------+--------+
                             |
                     Email Poll Worker
@@ -108,7 +108,7 @@ Future: - Anthropic - Gemini - Local models
 
 ### Gmail Service
 
-Responsibilities: - Authenticate with Gmail - Poll inbox - Identify job
+Responsibilities: - Authenticate with Email Provider - Poll inbox - Identify job
 emails - Avoid duplicate imports
 
 Output: Raw Email → Database
@@ -354,3 +354,10 @@ structured job data - Analyze postings with typed AI outputs - Recommend
 the best resume - Explain match decisions - Generate interview
 preparation - Prepare browser-based applications - Require human
 approval - Track outcomes and analytics
+
+
+# Start backend command
+uvicorn app.main:app --reload
+
+# Start frontend command
+npm run dev

@@ -15,7 +15,6 @@ def build_job_create_from_normalized(
         classification: JobClassification
        
 ) -> JobCreate:
-    print("build_job_create_from_normalized called!!!")
 
     if normalized.title is None:
             raise ValueError("Cannot create JobCreate: job title was not extracted")
@@ -26,11 +25,12 @@ def build_job_create_from_normalized(
     if normalized.job_url is None:
         raise ValueError("Cannot create JobCreate: application URL was not extracted")
 
+
+    
     salary = parse_salary(normalized.salary)
     
     # classification = classify_job(normalized)
-
-
+    
     return JobCreate(
             title=normalized.title,
             company=normalized.company,

@@ -13,6 +13,8 @@ from app.constants.keyword_list import (
 )
 from app.mail.crud import create_email, get_email_by_message_id
 from app.mail.mappers.job_email import build_email_create_from_normalized
+
+
 from app.mail.models import Email, EmailProvider, EmploymentType, WorkLocation
 from app.mail.normalizer.base import NormalizedJob
 
@@ -244,19 +246,34 @@ def parse_salary(salary: str | None) -> ParsedSalary:
 
         currency_symbol = match.group("range_currency")
 
-        salary_min = int(
-            float(match.group("range_min").replace(",", ""))
+        # salary_min = int(
+        #     float(match.group("range_min").replace(",", ""))
+        # )
+
+        # salary_max = int(
+        #     float(match.group("range_max").replace(",", ""))
+        # )
+
+        salary_min = parse_salary_value(
+            match.group("range_min"),
+            match.group("range_min_suffix"),
         )
 
-        salary_max = int(
-            float(match.group("range_max").replace(",", ""))
+        salary_max = parse_salary_value(
+            match.group("range_max"),
+            match.group("range_max_suffix"),
         )
 
     else:
         currency_symbol = match.group("single_currency")
 
-        salary_min = int(
-            float(match.group("single_min").replace(",", ""))
+        # salary_min = int(
+        #     float(match.group("single_min").replace(",", ""))
+        # )
+
+        salary_min = parse_salary_value(
+            match.group("single_min"),
+            match.group("single_min_suffix"),
         )
 
         salary_max = None
@@ -267,6 +284,22 @@ def parse_salary(salary: str | None) -> ParsedSalary:
         currency=currency_map.get(currency_symbol),
     )
 
+
+def parse_salary_value(
+    value: str,
+    suffix: str | None,
+) -> int:
+    amount = float(value.replace(",", ""))
+
+    if suffix:
+        suffix = suffix.lower()
+
+        if suffix == "k":
+            amount *= 1_000
+        elif suffix == "m":
+            amount *= 1_000_000
+
+    return int(amount)
 
 
 def persist_normalized_email(
@@ -289,3 +322,6 @@ def persist_normalized_email(
     email_data = build_email_create_from_normalized(first)
     # return email_data
     return create_email(db, email_data)
+
+
+

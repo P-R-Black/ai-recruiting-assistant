@@ -70,7 +70,7 @@ body {
   margin: 0;
 }
 
-.cardButtonContainer {
+.innerCardButtonContainer {
   align-items: center;
   background: var(--primary-text);
   border-radius: 5px;
@@ -80,9 +80,10 @@ body {
   width: 4.85rem;
   justify-content: center;
   overflow: hidden;
+
 }
 
-.cardButtonContainer::after {
+.innerCardButtonContainer::after {
   content: '';
   position: absolute;
   width: 16rem;
@@ -93,7 +94,7 @@ body {
   animation-play-state: paused;
 }
 
-.cardButtonContainer::before {
+.innerCardButtonContainer::before {
   content: '';
   position: absolute;
   width: 16rem;
@@ -105,8 +106,8 @@ body {
   animation-play-state: paused;
 }
 
-.cardButtonContainer:hover::before,
-.cardButtonContainer:hover::after {
+.innerCardButtonContainer:hover::before,
+.innerCardButtonContainer:hover::after {
   animation-play-state: running;
   background-image: conic-gradient(transparent, transparent, transparent, var(--inverse-primary));
 }

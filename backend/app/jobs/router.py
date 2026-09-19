@@ -43,6 +43,7 @@ def list_jobs_endpoint(
     is_relevant: bool | None = None,
     
     ):
+    
     return crud.list_jobs(
         db, 
         skip=skip, 
@@ -77,7 +78,6 @@ def update_job_endpoint(
     job_update: JobUpdate,
     db: Session = Depends(get_db),
     ):
-
     updated = crud.update_job(db, job_id, job_update)
     if updated is None:
         raise HTTPException(status_code=404, detail="Job not found")

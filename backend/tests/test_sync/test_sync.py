@@ -72,7 +72,6 @@ def test_sync_provider(
     db = MagicMock()
     settings = MagicMock()
 
-    print('mock_fetch.return_value:', mock_fetch.return_value)
     mock_fetch.return_value = [{"id": "1"}, {"id": "2"},]
     mock_normalize.side_effect = ["email1", "email2"]
     mock_import.return_value = ["imported_email1", "imported_email2"]

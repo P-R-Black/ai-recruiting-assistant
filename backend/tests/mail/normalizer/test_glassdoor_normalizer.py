@@ -5,18 +5,21 @@ from datetime import datetime, timezone
 from app.core.config import settings
 
 from app.mail.normalizer.glassdoor import (
-    extract_glassdoor_jobs,
-    identify_job_board)
+    extract_glassdoor_jobs)
 
-from app.mail.mail_services.mime_parser import build_parsed_email
-from app.mail.mail_services.detector import detect_job_email
+from app.mail.mail_services.parsers.mime_parser import build_parsed_email
+from app.mail.mail_services.detectors.detector import detect_job_email
 from app.mail.connectors.imap_connector import (
-    connect_imap, 
-    fetch_message, 
-    search_messages, 
+    connect_imap
+    )
+
+from app.mail.providers.icloud import (
+    fetch_imap_message, 
+    search_imap_messages, 
     fetch_imap_messages)
+
 from app.mail.models import EmailProvider
-from app.mail.mail_services.parser import parse_email
+from app.mail.mail_services.parsers.parser import parse_email
 from app.mail.providers.icloud import create_icloud_settings
 
 from app.mail.normalizer.glassdoor import GlassdoorNormalizer
@@ -26,7 +29,6 @@ from contextlib import contextmanager
 
 
 FIXTURES = Path(__file__).parent / "fixtures" / "emails"
-print("FIXTURES:", FIXTURES)
 
 # Fixture generation helper
 #
@@ -52,9 +54,9 @@ def icloud_connection():
 
 
 # def test_to_get_raw_email_data(icloud_connection):
-#     ids = search_messages(icloud_connection)
+#     ids = search_imap_messages(icloud_connection)
 #     # print('ids:',ids)
-#     raw_email = fetch_message(icloud_connection, b'2351') #b'1'
+#     raw_email = fetch_imap_message(icloud_connection, b'2351') #b'1'
 #     print('DEBUG raw_email:', raw_email)
 #     with open(
 #         "/Users/paulblack/VS Code/ai-recruiting-assistant/backend/tests/mail/normalizer/fixtures/emails/glassdoor_multiple_jobs.eml", "wb") as f:
@@ -95,9 +97,6 @@ def test_glassdoor_normalizer():
     normalizer = GlassdoorNormalizer()
 
     jobs = normalizer.normalize(parsed)
-
-    print('jobs:', jobs)
-
 
     assert len(jobs) == 10
     assert jobs[0].title == "IT Business Systems Developer"
@@ -157,20 +156,20 @@ def test_zip_recruiter_without_html_returns_no_jobs():
 
 
 
-
-
-
 # def test_normalizer_stuff(icloud_connection):
    
-#     ids = search_messages(icloud_connection)
-#     # print('ids', ids[:-1])
-#     raw_email = fetch_message(icloud_connection, b'1499')
+#     ids = search_imap_messages(icloud_connection)
+#     # print('ids', ids)
+
+#     raw_email = fetch_imap_message(icloud_connection, b'284')
 #     # print('raw_email:', raw_email)
 
-#     # email = parse_email(
-#     #     raw_email,
-#     #     EmailProvider.ICLOUD,
-#     # )
+#     email = parse_email(
+#         raw_email,
+#         EmailProvider.ICLOUD,
+#     )
+
+#     # print('email:', email)
 
     
 #     parsed = build_parsed_email(
@@ -179,6 +178,7 @@ def test_zip_recruiter_without_html_returns_no_jobs():
 #         )
 
 #     print('parsed ->raw_email:', parsed)
+#     print('parsed ->sender:', parsed.sender)
     
 #     normalizer = GlassdoorNormalizer()
     

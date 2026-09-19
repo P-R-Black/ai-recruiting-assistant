@@ -108,7 +108,6 @@ def classify_job_title(title:str) -> JobRoleType:
 
 def classify_job(normalized: NormalizedJob) -> JobClassification:
     role_type = classify_job_title(normalized.title)
-    print('role_type:', role_type)
 
     resume_map = {
         JobRoleType.FRONTEND: ResumeRecommendation.FRONTEND,

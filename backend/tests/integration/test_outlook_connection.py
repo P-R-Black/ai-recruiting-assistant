@@ -6,7 +6,8 @@ import pytest
 
 from app.mail.models import EmailProvider
 
-# from app.mail.outlook import connect_outlook
+from app.mail.connectors.outlook_connector import create_outlook_settings
+
 from app.mail.providers.outlook import (
     connect_outlook,
     create_outlook_settings,
@@ -14,6 +15,7 @@ from app.mail.providers.outlook import (
     graph_headers,
     normalize_outlook_message,
     search_folder,
+    delete_outlook_message,
     MissingRefreshTokenError
 )
 
@@ -51,7 +53,6 @@ def test_graph_headers(outlook_token):
 def test_fetch_outlook_messages(outlook_token):
 
     # Fetch messages from the inbox
-
     headers = graph_headers(outlook_token)
     folder_name = 'Inbox'
     target_folder = search_folder(headers, folder_name)
@@ -83,8 +84,6 @@ def test_fetch_outlook_messages(outlook_token):
 
 
     
-
-
 def test_normalize_outlook_message():
     graph_message = {
         "id": "abc123",
@@ -139,6 +138,32 @@ def test_normalize_outlook_message_missing_fields():
     assert email.recipient == ""
     assert email.raw_body == ""
 
+
+def test_delete_outlook_message(mocker):
+    response = mocker.Mock()
+    response.raise_for_status.return_value = None
+
+    delete_mock = mocker.patch(
+        "app.mail.providers.outlook.httpx.delete",
+        return_value=response,
+    )
+
+    headers = {
+        "Authorization": "Bearer test-token",
+    }
+
+    delete_outlook_message(
+        headers=headers,
+        message_id="messages/abc123",
+    )
+
+    delete_mock.assert_called_once_with(
+        "https://graph.microsoft.com/v1.0/me/messages/abc123",
+        headers=headers,
+        timeout=30,
+    )
+
+    response.raise_for_status.assert_called_once()
 
 """
 Run individual tests

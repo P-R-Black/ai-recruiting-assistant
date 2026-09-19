@@ -5,9 +5,13 @@ import pytest
 
 from app.mail.connectors.imap_connector import (
     connect_imap, 
-    fetch_imap_messages, 
-    fetch_message, 
-    search_messages
+)
+
+from app.mail.providers.icloud import (
+    fetch_imap_messages,
+    fetch_imap_message,
+    search_imap_messages,
+    delete_imap_message
 )
 from app.mail.models import EmailProvider
 from app.mail.schemas import EmailCreate
@@ -71,12 +75,12 @@ def test_search_messages():
     client.select.return_value = ("OK", [b""])
     client.search.return_value = ("OK", [b"1 2 3"])
 
-    ids = search_messages(client)
+    ids = search_imap_messages(client)
 
     assert ids == [b"1", b"2", b"3"]
 
     client.select.assert_called_once_with("INBOX")
-    client.search.assert_called_once_with(None, "ALL")
+    client.search.assert_called_once_with("SEARCH", None, "ALL")
 
 
 def test_search_messages_empty():
@@ -85,7 +89,7 @@ def test_search_messages_empty():
     client.select.return_value = ("OK", [b""])
     client.search.return_value = ("OK", [b""])
 
-    ids = search_messages(client)
+    ids = search_imap_messages(client)
 
     assert ids == []
 
@@ -97,7 +101,7 @@ def test_search_messages_search_failure():
     client.search.return_value = ("NO", [])
 
     with pytest.raises(RuntimeError):
-        search_messages(client)
+        search_imap_messages(client)
 
 
 
@@ -111,7 +115,7 @@ def test_fetch_message():
         [(b"1 (BODY[] {35})", raw)],
     )
 
-    result = fetch_message(client, b"1")
+    result = fetch_imap_message(client, b"1")
    
 
     assert result == raw
@@ -129,7 +133,7 @@ def test_fetch_message_failure():
     client.fetch.return_value = ("NO", [])
 
     with pytest.raises(RuntimeError):
-        fetch_message(client, b"1")
+        fetch_imap_message(client, b"1")
 
 
 def test_fetch_message_empty():
@@ -138,7 +142,7 @@ def test_fetch_message_empty():
     client.fetch.return_value = ("OK", [])
 
     with pytest.raises(RuntimeError):
-        fetch_message(client, b"1")
+        fetch_imap_message(client, b"1")
 
 
 def test_fetch_imap_messages(monkeypatch, db):
@@ -152,17 +156,17 @@ def test_fetch_imap_messages(monkeypatch, db):
     connection = FakeConnection()
 
     monkeypatch.setattr(
-        "app.mail.connectors.imap_connector.connect_imap",
+        "app.mail.providers.icloud.connect_imap",
         lambda settings: connection,
     )
 
     monkeypatch.setattr(
-        "app.mail.connectors.imap_connector.search_messages",
+        "app.mail.providers.icloud.search_imap_messages",
         lambda conn: [b"1", b"2"],
     )
 
     monkeypatch.setattr(
-        "app.mail.connectors.imap_connector.fetch_message",
+        "app.mail.providers.icloud.fetch_imap_message",
         lambda conn, message_id: b"raw email",
     )
 
@@ -177,20 +181,23 @@ def test_fetch_imap_messages(monkeypatch, db):
     )
 
     monkeypatch.setattr(
-        "app.mail.connectors.imap_connector.parse_email",
+        "app.mail.mail_services.parser.parse_email",
         lambda raw, provider: email,
     )
 
-    imported = []
+    import_calls = []
 
     def fake_import(db, email):
-        imported.append(email)
+        import_calls.append(email)
         return email
 
+
     monkeypatch.setattr(
-        "app.mail.connectors.imap_connector.import_email",
+        "app.mail.providers.icloud.import_email",
         fake_import,
     )
+
+
 
     settings = IMAPSettings(
         host="imap.example.com",
@@ -200,11 +207,30 @@ def test_fetch_imap_messages(monkeypatch, db):
         provider=EmailProvider.APPLE,
     )
 
+
     result = fetch_imap_messages(
         db,
         settings,
     )
 
     assert len(result) == 2
-    assert len(imported) == 2
+    assert len(import_calls) == 2
     assert connection.logged_out is True
+
+
+
+
+def test_delete_imap_message(mocker):
+    connection = mocker.Mock()
+    uid = b"2351"
+
+    delete_imap_message(connection, uid)
+
+    connection.uid.assert_called_once_with(
+        "STORE",
+        uid,
+        "+FLAGS",
+        r"\Deleted",
+    )
+
+    connection.expunge.assert_called_once_with()

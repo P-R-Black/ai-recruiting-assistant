@@ -1,11 +1,14 @@
-
-
 from unittest.mock import patch
 
 import pytest
 
 from app.core.config import settings
-from app.mail.mail_services.importer import import_email, import_emails, import_outlook_messages
+from app.mail.mail_services.importers.importer import(
+    import_email, 
+    import_emails, 
+    import_outlook_messages
+    )
+
 from app.mail.models import EmailProvider
 from app.mail.providers.outlook import (
     connect_outlook, 

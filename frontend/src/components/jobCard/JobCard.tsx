@@ -1,9 +1,11 @@
 import type { JobCardProps, Job } from "../../types"
+import { Link } from "react-router";
 
+import { JobDeleteButton } from "../jobDeleteButton/JobDeleteButton";
 import { ROLE_COLORS, roleTypes, resumeRecommendations } from "../../constants/constants"
 
-const COMPANY_NAME_TEXT_LENGTH = 31
-const JOB_TITLE_TEXT_LENGTH = 24
+const COMPANY_NAME_TEXT_LENGTH = 22
+const JOB_TITLE_TEXT_LENGTH = 22
 
 export function JobCard({ job, }: JobCardProps) {
 
@@ -67,65 +69,73 @@ export function JobCard({ job, }: JobCardProps) {
         if (
             job.salary_min !== null && job.salary_max !== null
         ) {
-            return `${currency_symbol}${job.salary_min.toLocaleString()}K - ${currency_symbol}${job.salary_max.toLocaleString()}K`;
+            return `${currency_symbol}${job.salary_min.toLocaleString()} - ${currency_symbol}${job.salary_max.toLocaleString()}`;
         }
 
         if (job.salary_min !== null) {
-            return `${currency_symbol}${job.salary_min.toLocaleString()}K`
+            return `${currency_symbol}${job.salary_min.toLocaleString()}`
         }
 
-        return `${currency_symbol}${job.salary_max?.toLocaleString()}K`
+        return `${currency_symbol}${job.salary_max?.toLocaleString()}`
     }
 
 
 
     return (
-        <article style={{
-            ...styles.cardBorder, borderLeft: `7px solid ${job.role_type ?
-                ROLE_COLORS[job.role_type] : "Unknown"}`
-        }}>
-            <header style={styles.cardSectionDivider}>
-                <p style={styles.companyName}><span>🏢</span> {truncateCompanyName(job.company)}</p>
-            </header>
-            <section>
-                <h2 style={styles.cardJobTitle}>{truncateJobTitle(job.title)}</h2>
-            </section>
-            <section style={{ ...styles.badgeSpacing }}>
-                <span style={styles.badge}>Full Time</span>
-                <span style={styles.badge}>Hybrid/Remote</span>
-            </section>
-            <div style={styles.cardSectionDivider}></div>
-            <section style={styles.roleResumeBlock}>
-                <p style={styles.cardParagraphMarginReduction}><strong>Role:</strong>{" "}
-                    {job.role_type ? roleTypes[job.role_type] : "Unknown"}
-                </p>
-                <p style={styles.cardParagraphMarginReduction}><strong>Recommended Resume:</strong>{" "}
-                    {job.recommended_resume ?
-                        resumeRecommendations[job.recommended_resume] : "Unknown"}
-                </p>
-                <p style={styles.cardParagraphMarginReduction}>
-                    <strong>Relevant:</strong>{" "}
-                    {job.is_relevant ? "Yes" : "No"}
-                </p>
-            </section>
-            <div style={styles.cardSectionDivider}></div>
-            <footer style={styles.cardFooter}>
-                <div style={styles.salaryLocationBlock}>
-                    <p style={styles.cardJobSalary}><span>💰</span> {formatSalary(job)}</p>
-                    <p style={styles.cardLocation}><span>📍</span> {job.location ?? "Not Listed"}</p>
-                </div>
-                <div className="cardButtonContainer">
-                    <a style={styles.cardButton}
-                        className="cardButton"
-                        href={job.job_url}
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        View Job
-                    </a>
-                </div>
+        <Link to={`/jobs/${job.id}`} style={{ textDecoration: 'none' }}>
+            <article style={{
+                ...styles.cardBorder, borderLeft: `7px solid ${job.role_type ?
+                    ROLE_COLORS[job.role_type] : "Unknown"}`
+            }}>
+                <header style={styles.cardSectionDivider}>
+                    <p style={styles.companyName}><span>🏢</span> {truncateCompanyName(job.company)}</p>
+                </header>
+                <section>
+                    <h2 style={styles.cardJobTitle}>{truncateJobTitle(job.title)}</h2>
+                </section>
+                <section style={{ ...styles.badgeSpacing }}>
+                    <span style={styles.badge}>{job.employment_type ? job.employment_type : "Unknown"}</span>
+                    <span style={styles.badge}>{job.work_location ? job.work_location : "Unknown"}</span>
+                </section>
+                <div style={styles.cardSectionDivider}></div>
+                <section style={styles.roleResumeBlock}>
+                    <p style={styles.cardParagraphMarginReduction}><strong>Role:</strong>{" "}
+                        {job.role_type ? roleTypes[job.role_type] : "Unknown"}
+                    </p>
+                    <p style={styles.cardParagraphMarginReduction}><strong>Recommended Resume:</strong>{" "}
+                        {job.recommended_resume ?
+                            resumeRecommendations[job.recommended_resume] : "Unknown"}
+                    </p>
+                    <p style={styles.cardParagraphMarginReduction}>
+                        <strong>Relevant:</strong>{" "}
+                        {job.is_relevant ? "Yes" : "No"}
+                    </p>
+                </section>
+                <div style={styles.cardSectionDivider}></div>
+                <footer style={styles.cardFooter}>
+                    <div style={styles.salaryLocationBlock}>
+                        <p style={styles.cardJobSalary}><span>💰</span> {formatSalary(job)}</p>
+                        <p style={styles.cardLocation}><span>📍</span> {job.location ?? "Not Listed"}</p>
+                    </div>
 
-            </footer>
-        </article>
+                    <div style={styles.cardButtonContainer}>
+                        <div className="innerCardButtonContainer">
+                            <a style={styles.cardButton}
+                                className="cardButton"
+                                href={job.job_url}
+                                target="_blank"
+                                rel="noopener noreferrer">
+                                View Job
+                            </a>
+                        </div>
+                        <div className="innerCardButtonContainer">
+                            <JobDeleteButton jobId={job.id} />
+                        </div>
+                    </div>
+
+                </footer>
+            </article>
+        </Link>
     )
 
 }
@@ -194,9 +204,10 @@ const styles = {
 
     },
     cardFooter: {
-        alignItems: "center",
+        alignItems: "flex-start",
         display: "flex",
-        justifyContent: "space-between",
+        flexDirection: "column",
+        gap: "1rem",
         width: "100%",
     },
 
@@ -220,20 +231,20 @@ const styles = {
     cardButton: {
         alignItems: "center",
         backgroundColor: "var(--primary-text)",
+        border: "none",
         borderRadius: "5px",
         color: "var(--secondary-text)",
+        cursor: "pointer",
         display: "flex",
         fontSize: ".75rem",
         height: ".90rem",
         justifyContent: "center",
         padding: "0.05rem 0.50rem",
         textDecoration: "none",
-        width: "3.75rem",
+        width: "auto",
         zIndex: "1",
 
     },
-
-
 
     cardParagraphMarginReduction: {
         marginBottom: "-.25rem",
@@ -243,6 +254,15 @@ const styles = {
         borderBottom: "1px solid var(--highlight-text)",
         marginBottom: ".5rem",
         width: "100%"
+    },
+
+    cardButtonContainer: {
+        alignItems: "center",
+        // border: "2px solid yellow",
+        width: "100%",
+        display: "flex",
+        gap: "1rem",
+
     }
 
 

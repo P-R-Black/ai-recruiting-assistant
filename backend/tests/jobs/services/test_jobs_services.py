@@ -11,7 +11,7 @@ from app.jobs.jobs_services.service import (
 
 
 from app.mail.models import Email
-from app.mail.mail_services.mime_parser import build_parsed_email
+from app.mail.mail_services.parsers.mime_parser import build_parsed_email
 from app.mail.crud import create_email
 from app.mail.models import EmailProvider
 
@@ -55,10 +55,8 @@ def test_persist_normalized_jobs(db):
     )
 
     jobs = GlassdoorNormalizer().normalize(parsed)
-    print('DEBUG do i get jobs?', jobs)
 
     created_jobs = persist_normalized_jobs(db, jobs)
-    print('DEBUG do i get created_jobs?', created_jobs)
 
     assert len(created_jobs) == 10
 
@@ -92,18 +90,6 @@ def test_persist_normalized_jobs(db):
 
     assert db.query(Email).count() == 1
     assert db.query(Job).count() == 10
-
-    # assert target_job.title == "IT Business Systems Developer"
-    # assert target_job.location == "United States"
-    # assert target_job.company == "WITTENSTEIN"
-    # assert target_job.salary_min == 70
-    # assert target_job.salary_max == 90
-    # assert target_job.salary_currency == "USD"
-    # assert target_job.job_url.startswith("https://www.glassdoor.com/")
-
-    # assert target_job.fingerprint is not None
-    # assert len(target_job.fingerprint) == 64
-
 
 
 

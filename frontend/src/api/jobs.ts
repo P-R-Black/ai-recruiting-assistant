@@ -31,3 +31,28 @@ export async function getJobs(filters: JobFilters = {}): Promise<Job[]> {
     const jobs: Job[] = await response.json();
     return jobs;
 }
+
+
+export async function getJob(jobId: string): Promise<Job> {
+    const response = await fetch(`${API_URL}${jobId}`);
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch job");
+    }
+
+    const job: Job = await response.json();
+
+    return job;
+}
+
+export async function deleteJob(jobId: string): Promise<void> {
+
+    const response = await fetch(`${API_URL}${jobId}`, {
+        method: "DELETE",
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete job");
+    }
+}
+

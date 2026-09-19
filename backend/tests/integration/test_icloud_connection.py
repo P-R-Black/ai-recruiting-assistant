@@ -1,10 +1,14 @@
 import pytest
 
 from app.core.config import settings
-from app.mail.mail_services.detector import detect_job_email
-from app.mail.connectors.imap_connector import (connect_imap, fetch_message, search_messages, fetch_imap_messages)
+from app.mail.mail_services.detectors.detector import detect_job_email
+from app.mail.connectors.imap_connector import connect_imap
+from app.mail.providers.icloud import (
+    fetch_imap_message, 
+    fetch_imap_messages, 
+    search_imap_messages)
 from app.mail.models import EmailProvider
-from app.mail.mail_services.parser import parse_email
+from app.mail.mail_services.parsers.parser import parse_email
 from app.mail.providers.icloud import create_icloud_settings
 
 from contextlib import contextmanager
@@ -31,8 +35,6 @@ def icloud_connection():
 @pytest.mark.integration
 @pytest.mark.skipif(settings.icloud_username is None, reason="iCloud credentials not configured")
 def test_connect_to_real_icloud(icloud_connection):
-
-
     assert icloud_connection is not None
     assert icloud_connection.state == "AUTH"
 
@@ -47,7 +49,7 @@ def test_connect_to_real_icloud(icloud_connection):
 
 def test_mailbox_search_after_connection(icloud_connection):
    
-    ids = search_messages(icloud_connection)
+    ids = search_imap_messages(icloud_connection)
 
     assert isinstance(ids, list)
     assert len(ids) > 0
@@ -63,9 +65,9 @@ def test_mailbox_search_after_connection(icloud_connection):
 )
 def test_message_fetch_after_connection(icloud_connection):
    
-    ids = search_messages(icloud_connection)
+    ids = search_imap_messages(icloud_connection)
 
-    raw_email = fetch_message(icloud_connection, ids[-1])
+    raw_email = fetch_imap_message(icloud_connection, ids[-1])
     
 
     assert isinstance(raw_email, bytes)
@@ -75,8 +77,6 @@ def test_message_fetch_after_connection(icloud_connection):
         raw_email,
         EmailProvider.ICLOUD,
     )
-
-    print("DEBUG raw_email", email)
 
     assert email is not None
     assert email.provider == EmailProvider.ICLOUD
@@ -92,9 +92,9 @@ def test_message_fetch_after_connection(icloud_connection):
 )
 def test_detect_real_email(icloud_connection):
    
-    ids = search_messages(icloud_connection)
+    ids = search_imap_messages(icloud_connection)
 
-    raw_email = fetch_message(icloud_connection, ids[0])
+    raw_email = fetch_imap_message(icloud_connection, ids[0])
 
     email = parse_email(
         raw_email,

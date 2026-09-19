@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from app.core.config import settings
 
-from app.mail.mail_services.mime_parser import build_parsed_email
+from app.mail.mail_services.parsers.mime_parser import build_parsed_email
 from app.mail.models import EmailProvider, EmploymentType
 from app.mail.schemas import EmailCreate
 from app.mail.mail_services.service import WorkLocation, ExtractJob
