@@ -10,7 +10,6 @@ from app.mail.connectors.outlook_connector import create_outlook_settings
 
 from app.mail.providers.outlook import (
     connect_outlook,
-    create_outlook_settings,
     fetch_outlook_messages,
     graph_headers,
     normalize_outlook_message,
@@ -154,7 +153,7 @@ def test_delete_outlook_message(mocker):
 
     delete_outlook_message(
         headers=headers,
-        message_id="messages/abc123",
+        message_id="abc123",
     )
 
     delete_mock.assert_called_once_with(

@@ -6,7 +6,7 @@ from app.mail.models import EmailProvider
 from app.mail.mail_services.sync import fetch_messages, normalize_message, sync_all_providers, sync_provider
 
 
-@patch("app.mail.mail_services.sync.fetch_icloud_messages")
+@patch("app.mail.mail_services.sync.fetch_imap_messages")
 def test_fetch_messages_icloud(mock_fetch):
     settings = MagicMock()
 

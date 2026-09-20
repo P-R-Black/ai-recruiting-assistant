@@ -10,9 +10,10 @@ from app.mail.mail_services.importers.importer import(
     )
 
 from app.mail.models import EmailProvider
+
+from app.mail.connectors.outlook_connector import create_outlook_settings
 from app.mail.providers.outlook import (
     connect_outlook, 
-    create_outlook_settings,
     MissingRefreshTokenError
 )
 
@@ -31,15 +32,6 @@ def outlook_token():
         yield connect_outlook(settings_obj, interactive=False)
     except MissingRefreshTokenError:
         pytest.skip("Outlook refresh toke not available")
-
-# def outlook_token():
-#     settings_obj = create_outlook_settings(
-#         application_id=settings.application_id,
-#         client_secret=settings.client_secret,
-#     )
-
-#     token = connect_outlook(settings_obj)
-#     yield token
 
 
 
@@ -67,10 +59,10 @@ def test_import_multiple_emails_with_duplicates(db, email_data):
 
 def test_import_outlook_messages(db, email_data, outlook_token):
 
-    with patch("app.mail.mail_services.importer.graph_headers") as mock_headers, \
-         patch("app.mail.mail_services.importer.search_folder") as mock_search, \
-         patch("app.mail.mail_services.importer.fetch_outlook_messages") as mock_fetch, \
-         patch("app.mail.mail_services.importer.normalize_outlook_message") as mock_normalize:
+    with patch("app.mail.mail_services.importers.importer.graph_headers") as mock_headers, \
+         patch("app.mail.mail_services.importers.importer.search_folder") as mock_search, \
+         patch("app.mail.mail_services.importers.importer.fetch_outlook_messages") as mock_fetch, \
+         patch("app.mail.mail_services.importers.importer.normalize_outlook_message") as mock_normalize:
 
         mock_headers.return_value = {"Authorization": "Bearer token"}
 

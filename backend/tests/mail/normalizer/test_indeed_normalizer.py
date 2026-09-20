@@ -3,9 +3,6 @@ from pathlib import Path
 from datetime import datetime, timezone
 from app.core.config import settings
 
-from app.mail.normalizer.glassdoor import (
-    extract_glassdoor_jobs,
-    identify_job_board)
 
 from app.mail.normalizer.indeed import extract_indeed_jobs
 from app.mail.mail_services.parsers.mime_parser import build_parsed_email
@@ -21,7 +18,7 @@ from app.mail.models import EmailProvider
 from app.mail.normalizer.indeed import IndeedNormalizer
 from app.mail.normalizer.base import ParsedEmail
 
-from backend.app.mail.mail_services.parsers.parser import parse_email
+from app.mail.mail_services.parsers.parser import parse_email
 from app.mail.providers.icloud import create_icloud_settings
 
 

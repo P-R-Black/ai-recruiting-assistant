@@ -16,10 +16,9 @@ from app.orchestrator.orchestrator import (
     run_mail_ingestion,
     JOB_BOARD_PARSERS
     )
-
+from app.mail.connectors.outlook_connector import create_outlook_settings
 from app.mail.providers.outlook import (
     connect_outlook,
-    create_outlook_settings,
     fetch_outlook_messages,
     graph_headers,
     normalize_outlook_message,
@@ -209,7 +208,7 @@ def test_run_outlook_ingestion_parses_messages(mocker, db):
     )
 
     build_parsed_email_mock = mocker.patch(
-        "app.orchestrator.orchestrator.build_parsed_email",
+        "app.orchestrator.orchestrator.build_parsed_email_from_graph_message",
         side_effect=[
             parsed_email_1,
             parsed_email_2,
@@ -278,7 +277,7 @@ def test_run_outlook_ingestion_processes_parsed_emails(mocker, db):
     )
 
     build_parsed_email_mock = mocker.patch(
-        "app.orchestrator.orchestrator.build_parsed_email",
+        "app.orchestrator.orchestrator.build_parsed_email_from_graph_message",
         side_effect=[
             parsed_email_1,
             parsed_email_2,
@@ -488,7 +487,7 @@ def test_run_imap_ingestion_fetches_each_uid(mocker, db):
     )
 
     mocker.patch(
-        "app.orchestrator.orchestrator.parse_email",
+        "app.orchestrator.orchestrator.build_parsed_email",
         return_value=None,
     )
 
@@ -543,7 +542,7 @@ def test_run_imap_ingestion_parses_each_message(mocker, db):
     parsed_email_2 = mocker.Mock()
 
     parse_mock = mocker.patch(
-        "app.orchestrator.orchestrator.parse_email",
+        "app.orchestrator.orchestrator.build_parsed_email",
         side_effect=[
             parsed_email_1,
             parsed_email_2,

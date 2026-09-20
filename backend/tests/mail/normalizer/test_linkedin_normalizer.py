@@ -4,8 +4,6 @@ from pathlib import Path
 from datetime import datetime, timezone
 from app.core.config import settings
 
-from app.mail.normalizer.glassdoor import (
-    extract_glassdoor_jobs)
 
 from app.mail.mail_services.parsers.mime_parser import build_parsed_email
 from app.mail.mail_services.detectors.detector import detect_job_email
@@ -28,10 +26,9 @@ from contextlib import contextmanager
 from app.mail.mail_services.parsers.graph_parser import build_parsed_email_from_graph_message
 
 
-# from app.mail.outlook import connect_outlook
+from app.mail.connectors.outlook_connector import create_outlook_settings
 from app.mail.providers.outlook import (
-    connect_outlook,
-    create_outlook_settings,
+    connect_outlook, 
     fetch_outlook_messages,
     graph_headers,
     normalize_outlook_message,

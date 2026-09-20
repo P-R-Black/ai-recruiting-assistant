@@ -7,6 +7,7 @@ from app.mail.connectors.imap_connector import (
     connect_imap, 
 )
 
+
 from app.mail.providers.icloud import (
     fetch_imap_messages,
     fetch_imap_message,
@@ -80,7 +81,7 @@ def test_search_messages():
     assert ids == [b"1", b"2", b"3"]
 
     client.select.assert_called_once_with("INBOX")
-    client.search.assert_called_once_with("SEARCH", None, "ALL")
+    client.search.assert_called_once_with(None, "ALL")
 
 
 def test_search_messages_empty():
@@ -181,7 +182,7 @@ def test_fetch_imap_messages(monkeypatch, db):
     )
 
     monkeypatch.setattr(
-        "app.mail.mail_services.parser.parse_email",
+        "app.mail.mail_services.parsers.mime_parser.build_parsed_email",
         lambda raw, provider: email,
     )
 
@@ -230,7 +231,7 @@ def test_delete_imap_message(mocker):
         "STORE",
         uid,
         "+FLAGS",
-        r"\Deleted",
+        r"(\Deleted)",
     )
 
     connection.expunge.assert_called_once_with()

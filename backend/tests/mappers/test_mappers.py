@@ -84,8 +84,8 @@ def test_build_job_create_from_normalized():
     assert result.work_location is None
     assert result.recruiter_name is None
 
-    assert result.salary_min == 70
-    assert result.salary_max == 90
+    assert result.salary_min == 70000
+    assert result.salary_max == 90000
     assert result.salary_currency == "USD"
 
     assert result.description == "N/A"

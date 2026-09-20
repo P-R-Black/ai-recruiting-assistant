@@ -3,18 +3,15 @@ from pathlib import Path
 from datetime import datetime, timezone
 from app.core.config import settings
 
-from app.mail.normalizer.glassdoor import (
-    extract_glassdoor_jobs,
-    identify_job_board)
 
 from app.mail.normalizer.zip_recruiter import extract_ziprecruiter_jobs
 from app.mail.mail_services.parsers.mime_parser import build_parsed_email
 from app.mail.mail_services.detectors.detector import detect_job_email
 from app.mail.connectors.imap_connector import (
-    connect_imap, 
-    fetch_message, 
-    search_messages, 
-    fetch_imap_messages)
+    connect_imap)
+from app.mail.providers.icloud import (
+    fetch_imap_messages, fetch_imap_message, 
+)
 
 from app.mail.models import EmailProvider
 from app.mail.normalizer.zip_recruiter import ZipRecruiterNormalizer
