@@ -2,7 +2,7 @@ from pathlib import Path
 
 import msal
 
-from app.core.config import BASE_DIR
+from app.core.config.base import BASE_DIR
 from app.mail.mail_services.service import OutlookSettings
 from app.mail.models import EmailProvider
 

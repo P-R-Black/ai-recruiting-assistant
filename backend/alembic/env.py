@@ -11,6 +11,7 @@ from app.core.database import Base
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.database_url)
 
+
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
@@ -73,10 +74,6 @@ def run_migrations_online() -> None:
 
         with context.begin_transaction():
             context.run_migrations()
-
-    # safe to inspect afterward - migration transaction already committed
-    # with connectable.connect() as diag_connection:
-    #     print("ALEMBIC TABLES:", inspect(diag_connection).get_table_names())
 
 if context.is_offline_mode():
     run_migrations_offline()

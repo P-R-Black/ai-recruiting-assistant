@@ -1,10 +1,11 @@
+
 from pathlib import Path
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 
-BASE_DIR = Path(__file__).resolve().parents[2]
+BASE_DIR = Path(__file__).resolve().parents[3]
 
-class Settings(BaseSettings):
+class BaseAppSettings(BaseSettings):
     database_url: str
 
     icloud_username: str | None = None
@@ -15,12 +16,5 @@ class Settings(BaseSettings):
 
     application_id: str | None = None
     client_secret: str | None = None
+    
 
-    model_config = SettingsConfigDict(
-        env_file=BASE_DIR /".env",
-        extra="ignore"
-        )
-
-
-
-settings = Settings()

@@ -361,3 +361,12 @@ uvicorn app.main:app --reload
 
 # Start frontend command
 npm run dev
+
+# Run program from command line
+python -m app.scripts.run_mail_ingestion
+
+# Docker Build (run after chanes made to docker related files)
+docker build -f docker/Dockerfile -t ai-recruiting-api . 
+
+# Start Docker Container (run after chanes made to docker image)
+docker run --rm --env-file .env -p 8000:8000 ai-recruiting-api

@@ -18,7 +18,7 @@ Frontend Milestone 1
 ⬜ Delete processed email after successful ingestion
 
 Then Milestone 2
-⬜ Job detail page
+✅ Job detail page
 ⬜ Open original job_url
 ⬜ Review classification
 ⬜ Allow classification overrides
@@ -43,6 +43,23 @@ Then Milestone 2
 ⬜ Eventually analyze job fit
 
 ✅
+
+Phase 1 | Local Docker Environment
+✅ Add project to Docker Container
+
+
+Phase 1 | Take To Production
+⬜ Separate production configuration from local Docker configuration
+⬜ Create the production .env on the VPS — never commit it.
+⬜ Decide where production PostgreSQL lives.
+⬜ Set up the production Compose stack.
+⬜ Build the API image on the VPS.
+⬜ Run Alembic migrations against the production database.
+⬜ Put Nginx in front of FastAPI.
+⬜ Configure HTTPS.
+⬜ Deploy the React frontend.
+⬜ Test the complete production flow.
+
 
 Phase 2 | Backend
 3. Confidence scoring

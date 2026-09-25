@@ -2,7 +2,7 @@ from pathlib import Path
 
 import httpx
 
-from app.core.config import BASE_DIR
+from app.core.config.base import BASE_DIR
 from app.mail.connectors.outlook_connector import (
     MissingRefreshTokenError,
     create_outlook_client,
@@ -14,6 +14,7 @@ from app.mail.models import EmailProvider
 from app.mail.schemas import EmailCreate
 
 REFRESH_TOKEN_PATH = Path("refresh_token.txt")
+
 
 TOKEN_DIRECTORY = BASE_DIR / ".tokens"
 TOKEN_DIRECTORY.mkdir(parents=True, exist_ok=True)
