@@ -31,9 +31,3 @@ async def health_check(db: Session = Depends(get_db)):
         "status": "ok",
         "message": "AI Recruiting Assistant backend is running"
         }
-
-
-@jobs_router.post
-def create_new_job():
-    pass
-

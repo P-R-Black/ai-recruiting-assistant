@@ -4,6 +4,8 @@ node_modules/
 
 .env
 .env.docker
+.env.production.local
+
 
 __pycache__/
 .pytest_cache/
@@ -24,3 +26,4 @@ dist/
 htmlcov/
 
 .DS_Store
+backups/
