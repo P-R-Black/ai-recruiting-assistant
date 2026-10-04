@@ -5,7 +5,7 @@ node_modules/
 .env
 .env.docker
 .env.production.local
-
+.env.production
 
 __pycache__/
 .pytest_cache/
