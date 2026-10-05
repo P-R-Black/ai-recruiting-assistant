@@ -5,7 +5,7 @@ set -euo pipefail
 
 PROJECT_DIR="/opt/ai-recruiting-assistant"
 COMPOSE_FILE="docker-compose.prod.yml"
-ENV_FILE=".env.production.local"
+ENV_FILE="backend/.env.production"
 API_SERVICE="api"
 
 cd "$PROJECT_DIR"
