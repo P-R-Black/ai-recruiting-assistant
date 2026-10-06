@@ -54,7 +54,6 @@ for i in {1..30}; do
     if [[ "$API_STATUS" == "healthy" && "$DB_STATUS" == "healthy" ]]; then
         echo "API and database are healthy."
         break
-    fi
 
     if [[ "$i" -eq 30 ]]; then
         echo "ERROR: Services did not become healthy in time."
@@ -63,7 +62,6 @@ for i in {1..30}; do
             -f "$COMPOSE_FILE" \
             ps
         exit 1
-    fi
 
     sleep 2
 done
