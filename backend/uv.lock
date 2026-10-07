@@ -18,6 +18,7 @@ dependencies = [
     { name = "alembic" },
     { name = "beautifulsoup4" },
     { name = "fastapi" },
+    { name = "httpx" },
     { name = "msal" },
     { name = "pandas" },
     { name = "psycopg", extra = ["binary"] },
@@ -30,7 +31,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "httpx" },
     { name = "pytest" },
     { name = "pytest-mock" },
     { name = "ruff" },
@@ -41,6 +41,7 @@ requires-dist = [
     { name = "alembic", specifier = ">=1.19.0" },
     { name = "beautifulsoup4", specifier = ">=4.15.0" },
     { name = "fastapi" },
+    { name = "httpx" },
     { name = "msal", specifier = ">=1.37.0" },
     { name = "pandas", specifier = ">=3.0.5" },
     { name = "psycopg", extras = ["binary"] },
@@ -53,7 +54,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "httpx" },
     { name = "pytest" },
     { name = "pytest-mock", specifier = ">=3.15.1" },
     { name = "ruff" },
