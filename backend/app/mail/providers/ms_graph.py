@@ -1,8 +1,7 @@
-import os
-import webbrowser
+import email
+from email import policy
 
-import msal
-from dotenv import load_dotenv
+from bs4 import BeautifulSoup
 
 MS_GRAPH_BASE_URL = "https://graph.microsoft.com/v1.0"
 
@@ -71,10 +70,7 @@ MS_GRAPH_BASE_URL = "https://graph.microsoft.com/v1.0"
 
 # main()
 
-import email
-from email import policy
 
-from bs4 import BeautifulSoup
 
 
 def extract_html_from_email(email_file_path):
