@@ -1,10 +1,10 @@
-# import os
-# import webbrowser
+import os
+import webbrowser
 
-# import msal
-# from dotenv import load_dotenv
+import msal
+from dotenv import load_dotenv
 
-# MS_GRAPH_BASE_URL = "https://graph.microsoft.com/v1.0"
+MS_GRAPH_BASE_URL = "https://graph.microsoft.com/v1.0"
 
 # def get_access_token(application_id, client_secret, scopes):
 #     client = msal.ConfidentialClientApplication(
@@ -55,12 +55,13 @@
 #     APPLICATION_ID = os.getenv('APPLICATION_ID')
 #     CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 #     SCOPES = ['User.Read', 'Mail.ReadWrite', 'Mail.Send']
-
+#     print('Try access token with application_id:', APPLICATION_ID)
 #     try:
 #         access_token = get_access_token(
 #             application_id=APPLICATION_ID,
 #             client_secret=CLIENT_SECRET,
 #             scopes=SCOPES)
+#         print('Access token acquired:', access_token)
 #         headers = {
 #             'Authorization': 'Bearer ' + access_token
 #         }

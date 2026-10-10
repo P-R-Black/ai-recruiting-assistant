@@ -7,6 +7,13 @@ node_modules/
 .env.production.local
 .env.production
 
+
+# Local Authentication Tokens
+refresh_token.txt
+backend/refresh_token.txt
+backend/.tokens/
+
+
 __pycache__/
 .pytest_cache/
 .ruff_cache/
@@ -28,3 +35,4 @@ htmlcov/
 .DS_Store
 backups/
 logs/
+/backend/refresh_token.txt

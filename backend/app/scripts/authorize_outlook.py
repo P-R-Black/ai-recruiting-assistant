@@ -4,10 +4,9 @@ from app.core.config import settings
 from app.mail.mail_services.service import OutlookSettings
 from app.mail.providers.outlook import (
     create_outlook_client,
-    create_outlook_settings,
     save_refresh_token,
 )
-
+from app.mail.connectors.outlook_connector import create_outlook_settings
 
 def authorize_outlook(settings: OutlookSettings):
     client = create_outlook_client(settings)
