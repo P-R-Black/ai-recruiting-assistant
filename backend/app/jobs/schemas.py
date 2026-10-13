@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, UrlConstraints, model_validator
 
 from app.jobs.classifiers.role import JobRoleType, ResumeRecommendation
 from app.jobs.models import JobSource, JobStatus
@@ -17,7 +17,7 @@ RemoteType = Annotated[str | None, Field(max_length=100)]
 Salary = Annotated[int | None, Field(ge=0)]
 Currency = Annotated[str | None, Field(max_length=10)]
 Description = Annotated[str, Field(min_length=1)]
-JobUrl = HttpUrl
+JobUrl = Annotated[HttpUrl, UrlConstraints(max_length=8192),]
 
 
 class JobBase(BaseModel):

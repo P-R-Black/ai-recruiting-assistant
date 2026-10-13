@@ -101,7 +101,7 @@ class Job(Base):
     )
 
     job_url: Mapped[str] = mapped_column(
-        String(2048),
+        Text,
         nullable=False,
     )
 
