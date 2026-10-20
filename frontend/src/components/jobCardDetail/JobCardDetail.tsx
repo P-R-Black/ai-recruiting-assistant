@@ -179,7 +179,7 @@ const styles = {
         alignItems: "flex-start",
         display: "flex",
         gap: "1rem",
-        flexDirection: "column",
+        flexDirection: "column" as const,
         width: "100%",
     },
 

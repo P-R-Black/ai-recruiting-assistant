@@ -1,6 +1,6 @@
 import type { Job, JobFilters } from "../types";
 
-const API_URL = "http://127.0.0.1:8000/jobs/"
+const API_URL = "https://recruiting-api.paulrblack.com/jobs/"
 
 export async function getJobs(filters: JobFilters = {}): Promise<Job[]> {
     const params = new URLSearchParams();

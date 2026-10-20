@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { useJobs } from "./useJobs";
 import { getJobs } from "../api/jobs";
@@ -113,11 +113,11 @@ describe("useJobs", () => {
 
     it("refetches when filters change", async () => {
         vi.mocked(getJobs).mockImplementation(async (filters) => {
-            if (filters.is_relevant === true) {
+            if (filters?.is_relevant === true) {
                 return mockJobs;
             }
 
-            if (filters.is_relevant === false) {
+            if (filters?.is_relevant === false) {
                 return [];
             }
 

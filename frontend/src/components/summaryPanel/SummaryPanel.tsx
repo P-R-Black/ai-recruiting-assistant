@@ -1,13 +1,13 @@
+import type { Job } from "../../types";
 import { SummaryCard } from "../summaryCard/SummaryCard";
-import { ROLE_COLORS, roleTypes } from "../../constants/constants"
+import { ROLE_COLORS, roleTypes } from "../../constants/constants";
 import { useMemo } from "react";
 
-export function SummaryPanel({ jobs }: { jobs: { id: string; role_type: string; count: number, recommended_resume: string }[] }) {
-
+export function SummaryPanel({ jobs }: { jobs: Job[] }) {
     const roleCounts = useMemo(() => {
         return jobs.reduce<Record<string, number>>((acc, job) => {
-            const role = job.role_type;
-            acc[role] = (acc[role] ?? 0) + 1; //(acc[role] || 0) + job.count;
+            const role = job.role_type ?? "unknown";
+            acc[role] = (acc[role] ?? 0) + 1;
             return acc;
         }, {});
     }, [jobs]);

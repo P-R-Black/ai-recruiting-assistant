@@ -206,7 +206,7 @@ const styles = {
     cardFooter: {
         alignItems: "flex-start",
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "column" as const,
         gap: "1rem",
         width: "100%",
     },
