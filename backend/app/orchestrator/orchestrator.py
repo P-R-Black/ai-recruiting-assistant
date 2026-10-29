@@ -18,6 +18,7 @@ from app.mail.normalizer.zip_recruiter import ZipRecruiterNormalizer
 from app.mail.providers.icloud import (
     create_icloud_settings,
     fetch_imap_message,
+    require_uidplus,
     search_imap_messages,
 )
 from app.mail.providers.outlook import (
@@ -35,6 +36,10 @@ JOB_BOARD_PARSERS = {
 }
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
 
 def run_imap_ingestion(
         db: Session,
@@ -50,17 +55,33 @@ def run_imap_ingestion(
     )
 
     icloud_connection = connect_imap(settings)
+    try:
+        require_uidplus(icloud_connection)
+    except RuntimeError as e:
+        logger.error("IMAP server does not support UIDPLUS: %s", e)
+        return
+    
+    
+    # status, data = icloud_connection.capability()
+
+    # print("Authenticated CAPABILITY status:", status)
+    # print("Authenticated CAPABILITY response:", data)
+    # print("IMAP capabilities:", icloud_connection.capabilities)
+    # print("IMAP server:", icloud_connection.welcome)
     
     ids = search_imap_messages(icloud_connection)
     
 
     if ids:
-        for imap_uid in ids[-200:]:
+        for imap_uid in ids[-35:]: 
             try:
                 raw_email = fetch_imap_message(icloud_connection, imap_uid)
-            except Exception as e:
-                print(f'raw_email Exception: {e}')
-
+            except Exception:
+                logger.exception(
+                    "Failed to fetch iCloud message UID %r",
+                    imap_uid,
+                )
+                continue
             parsed_email = build_parsed_email(raw_email, EmailProvider.ICLOUD)
         
             if not parsed_email:
@@ -148,16 +169,25 @@ def process_email(
     normalizer = JOB_BOARD_PARSERS.get(job_board)
     
     if normalizer is None:
-        return []
+        logger.warning(
+            "No normalizer configured for recognized job board %s",
+            job_board,
+        )
+        return
     
     jobs = normalizer.normalize(email)
+
     if not jobs:
         return
     
-    created_jobs = persist_normalized_jobs(db, jobs)
+    # created_jobs = persist_normalized_jobs(db, jobs)
 
-    if not created_jobs:
-        return
+    # if not created_jobs:
+    #     return
+
+    # If persistence raises an exception, do not delete the source email.
+    # An empty result is valid when all jobs already exist.
+    persist_normalized_jobs(db, jobs)
 
     delete_email(
         provider=email.provider,

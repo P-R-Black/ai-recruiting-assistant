@@ -22,6 +22,14 @@ def connect_imap(settings: IMAPSettings):
 
     client.login(settings.username, settings.password)
 
+    status, _ = client.capability()
+
+    if status != "OK":
+        print('status is not ok:', status)
+        raise RuntimeError(
+            "Failed to retrieve IMAP capabilities after authentication"
+        )
+   
     return client
 
 

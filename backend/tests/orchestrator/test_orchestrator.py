@@ -437,6 +437,8 @@ def test_run_imap_ingestion_connects_to_imap(mocker):
         return_value=connection,
     )
 
+    mocker.patch("app.orchestrator.orchestrator.require_uidplus")
+
     search_mock = mocker.patch(
         "app.orchestrator.orchestrator.search_imap_messages",
         return_value=[],
@@ -472,6 +474,8 @@ def test_run_imap_ingestion_fetches_each_uid(mocker, db):
         "app.orchestrator.orchestrator.connect_imap",
         return_value=connection,
     )
+
+    mocker.patch("app.orchestrator.orchestrator.require_uidplus")
 
     search_mock = mocker.patch(
         "app.orchestrator.orchestrator.search_imap_messages",
@@ -524,6 +528,8 @@ def test_run_imap_ingestion_parses_each_message(mocker, db):
         "app.orchestrator.orchestrator.connect_imap",
         return_value=connection,
     )
+
+    mocker.patch("app.orchestrator.orchestrator.require_uidplus")
 
     mocker.patch(
         "app.orchestrator.orchestrator.search_imap_messages",
@@ -745,7 +751,8 @@ def test_process_email_deletes_email_after_successful_persistence(
 def test_process_email_does_not_delete_when_persistence_creates_no_jobs(
     mocker,
     db,
-):
+    ):
+    
     email = mocker.Mock()
     email.sender = "noreply@glassdoor.com"
 
@@ -759,12 +766,10 @@ def test_process_email_does_not_delete_when_persistence_creates_no_jobs(
 
     mocker.patch.dict(
         "app.orchestrator.orchestrator.JOB_BOARD_PARSERS",
-        {
-            "glassdoor": normalizer,
-        },
+        {"glassdoor": normalizer},
     )
 
-    mocker.patch(
+    persist_mock = mocker.patch(
         "app.orchestrator.orchestrator.persist_normalized_jobs",
         return_value=[],
     )
@@ -773,12 +778,50 @@ def test_process_email_does_not_delete_when_persistence_creates_no_jobs(
         "app.orchestrator.orchestrator.delete_email",
     )
 
-    process_email(
-        db=db,
-        email=email,
+    process_email(db=db, email=email)
+
+    persist_mock.assert_called_once()
+    delete_mock.assert_called_once_with(
+        provider=email.provider,
+        outlook_headers=None,
+        outlook_message_id=None,
+        imap_connection=None,
+        imap_uid=None,
     )
 
-    delete_mock.assert_not_called()
+    # email = mocker.Mock()
+    # email.sender = "noreply@glassdoor.com"
+
+    # normalizer = mocker.Mock()
+    # normalizer.normalize.return_value = [mocker.Mock()]
+
+    # mocker.patch(
+    #     "app.orchestrator.orchestrator.identify_job_board",
+    #     return_value="glassdoor",
+    # )
+
+    # mocker.patch.dict(
+    #     "app.orchestrator.orchestrator.JOB_BOARD_PARSERS",
+    #     {
+    #         "glassdoor": normalizer,
+    #     },
+    # )
+
+    # mocker.patch(
+    #     "app.orchestrator.orchestrator.persist_normalized_jobs",
+    #     return_value=[],
+    # )
+
+    # delete_mock = mocker.patch(
+    #     "app.orchestrator.orchestrator.delete_email",
+    # )
+
+    # process_email(
+    #     db=db,
+    #     email=email,
+    # )
+
+    # delete_mock.assert_not_called()
 
 
 def test_run_mail_ingestion_runs_both_providers(mocker, db):

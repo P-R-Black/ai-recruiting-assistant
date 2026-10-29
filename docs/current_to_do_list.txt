@@ -1,77 +1,108 @@
-Frontend Milestone 1
-✅ Set up the React frontend API layer
-✅ Create TypeScript Job type based on JobResponse
-✅ Create getJobs() API function
-✅ Create basic Jobs page
-✅ Fetch jobs from FastAPI
-✅ Render jobs
-✅ Display role_type
-✅ Display recommended_resume
-✅ Display is_relevant
-✅ Add Relevant / Irrelevant / All filtering
-✅ Add role-type filtering
-✅ Add resume recommendation filtering
-✅ Add loading state
-✅ Add error state
-✅ Add frontend tests
-⬜ Delete reviewed job from frontend
-⬜ Delete processed email after successful ingestion
+Milestone 1 — Improve the existing dashboard
+Make the current job collection easier to navigate and manage.
 
-Then Milestone 2
-✅ Job detail page
-⬜ Open original job_url
-⬜ Review classification
-⬜ Allow classification overrides
-⬜ Better job-card UI
-⬜ Pagination
+0 of 9 complete
+⬜ Open the original job posting using job_url
+⬜ Review the existing keyword-based classification in the UI
+⬜ Allow users to manually override a job's classification
+⬜ Persist classification overrides in the database
+⬜ Distinguish system-generated classifications from user overrides
+⬜ Improve job-card layout and display of available job details
+⬜ Implement pagination for the jobs list
+⬜ Add or verify loading, empty, and error states
+⬜ Add or update backend and frontend tests
 
 
-3. Confidence scoring
-⬜ Field-level confidence
+Milestone 2 — Improve data quality and confidence
+⬜ Make missing, incomplete, or uncertain job information visible.
+
+0 of 7 complete
+⬜ Audit the fields currently extracted from provider emails
+⬜ Identify required versus optional job fields
+⬜ Track the source of extracted values where useful
+⬜ Identify missing or potentially unreliable fields
+⬜ Design a field-level confidence and provenance representation
+⬜ Display missing or uncertain information in the dashboard
+⬜ Add tests for incomplete and malformed job data
 
 
-4. Classification
-⬜ Interview invitation
-⬜ Application confirmation
-⬜ Rejection
-⬜ Job alert
-⬜ Recruiter outreach
+Milestone 3 — Expand email classification
+Organize job-search communications beyond job postings.
+
+0 of 9 complete
+⬜ Define a controlled set of email categories
+⬜ Support interview invitations
+⬜ Support application confirmations
+⬜ Support rejection notifications
+⬜ Support job alerts
+⬜ Support recruiter outreach
+⬜ Distinguish a new job opportunity from a message about an existing application
+⬜ Handle ambiguous emails and allow manual correction
+⬜ Test classification rules against representative email examples
 
 
-5. AI enrichment
-⬜ Enrich missing job fields
-⬜ Eventually analyze job fit
+Milestone 4 — Retrieve and enrich job descriptions
+Prepare reliable job data for AI analysis.
 
-✅
-
-Phase 1 | Local Docker Environment
-✅ Add project to Docker Container
-
-
-Phase 1 | Take To Production
-⬜ Separate production configuration from local Docker configuration
-⬜ Create the production .env on the VPS — never commit it.
-⬜ Decide where production PostgreSQL lives.
-⬜ Set up the production Compose stack.
-⬜ Build the API image on the VPS.
-⬜ Run Alembic migrations against the production database.
-⬜ Put Nginx in front of FastAPI.
-⬜ Configure HTTPS.
-⬜ Deploy the React frontend.
-⬜ Test the complete production flow.
+0 of 9 complete
+⬜ Determine which collected jobs have a usable job_url
+⬜ Design a service for retrieving job-posting content
+⬜ Extract and normalize the full job description where accessible
+⬜ Persist the description and its source
+⬜ Handle expired links, inaccessible pages, and extraction failures
+⬜ Track extraction status and retry failures safely
+⬜ Identify missing fields that can be enriched from the posting
+⬜ Validate enriched values before saving them
+⬜ Add tests using saved or representative job-page fixtures
 
 
-Phase 2 | Backend
-3. Confidence scoring
-⬜ Field-level confidence
+Milestone 5 — Introduce LLM-powered analysis
+Build and evaluate the first AI feature using structured, validated output.
 
-4. Classification
-⬜ Interview invitation
-⬜ Application confirmation
-⬜ Rejection
-⬜ Job alert
-⬜ Recruiter outreach
+0 of 12 complete
+⬜ Inventory the available resumes and their versions
+⬜ Define role categories and seniority labels
+⬜ Define a Pydantic schema for the analysis result
+⬜ Choose an initial LLM provider and model
+⬜ Create a focused prompt for job classification
+⬜ Create a focused prompt for resume recommendation
+⬜ Compare the job description with the actual resume content
+⬜ Return a recommendation with supporting evidence and identified gaps
+⬜ Handle invalid output, timeouts, rate limits, and provider errors
+⬜ Store analysis results separately from the source job
+⬜ Track model and prompt versions for reproducibility
+⬜ Evaluate results against a small manually reviewed test set
 
-5. AI enrichment
-⬜ Enrich missing job fields
+
+Milestone 6 — Integrate AI results into the dashboard
+Make recommendations understandable and user-controlled.
+
+0 of 8 complete
+⬜ Display the recommended resume on each analyzed job
+⬜ Show role category and seniority
+⬜ Display relevant strengths and potential skill gaps
+⬜ Show missing evidence or uncertainty without overstating confidence
+⬜ Allow users to override the recommended resume
+⬜ Preserve the distinction between AI recommendations and user decisions
+⬜ Allow analysis to be rerun when the description or resume changes
+⬜ Add integration tests for the analysis workflow
+
+
+Milestone 7 — Reliability and release
+Make the new functionality safe to operate in production.
+
+0 of 8 complete
+⬜ Review logging and error handling
+⬜ Verify that secrets and personal resume data are handled appropriately
+⬜ Prevent duplicate or unnecessary analysis runs
+⬜ Review database migrations and rollback considerations
+⬜ Update CI tests and deployment documentation
+⬜ Deploy using the established production workflow
+⬜ Verify the deployed dashboard and API
+⬜ Document known limitations and the next phase
+
+
+
+5. AI enrichmen 
+⬜ Enrich missing job field 
 ⬜ Eventually analyze job fit
