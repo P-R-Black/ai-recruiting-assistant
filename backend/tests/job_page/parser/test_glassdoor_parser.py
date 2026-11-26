@@ -77,17 +77,17 @@ test_url = "https://www.glassdoor.com/partner/jobListing.htm?pos=110&ao=1136043&
 #             print("Context:", html[start:end])
 
 
-def test_glassdoor_parser_against_live_url():
-    url = glassdoor_one  # Change this to url_two or url_three to test different cases
+# def test_glassdoor_parser_against_live_url():
+#     url = glassdoor_one  # Change this to url_two or url_three to test different cases
 
-    retrieved_page = retrieve_job_page(url)
-    assert retrieved_page.status_code == 200
+#     retrieved_page = retrieve_job_page(url)
+#     assert retrieved_page.status_code == 200
 
-    extractor = GlassdoorJobPageExtractor()
-    job = extractor.extract(retrieved_page)
-    # print(f"\nDEBUG - Job: {job}")
-    print(f"\nDEBUG - Job.description: {job.description}")
-    assert job.description
+#     extractor = GlassdoorJobPageExtractor()
+#     job = extractor.extract(retrieved_page)
+#     # print(f"\nDEBUG - Job: {job}")
+#     print(f"\nDEBUG - Job.description: {job.description}")
+#     assert job.description
 
 #     print(f"\nJob Description")
 #     print(job.description)
