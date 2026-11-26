@@ -57,23 +57,15 @@ def run_imap_ingestion(
     icloud_connection = connect_imap(settings)
     try:
         require_uidplus(icloud_connection)
-    except RuntimeError as e:
-        logger.error("IMAP server does not support UIDPLUS: %s", e)
+    except RuntimeError:
+        # logger.error("IMAP server does not support UIDPLUS: %s", e)
         return
-    
-    
-    # status, data = icloud_connection.capability()
-
-    # print("Authenticated CAPABILITY status:", status)
-    # print("Authenticated CAPABILITY response:", data)
-    # print("IMAP capabilities:", icloud_connection.capabilities)
-    # print("IMAP server:", icloud_connection.welcome)
     
     ids = search_imap_messages(icloud_connection)
     
 
     if ids:
-        for imap_uid in ids[-35:]: 
+        for imap_uid in ids[-200:]:  # [-200:] | [:20]
             try:
                 raw_email = fetch_imap_message(icloud_connection, imap_uid)
             except Exception:
@@ -94,7 +86,6 @@ def run_imap_ingestion(
                 imap_uid=imap_uid
             )
             
-
 
 
 
@@ -125,8 +116,8 @@ def run_outlook_ingestion(
         messages = fetch_outlook_messages(
             access_token, 
             folder_id=folder_id, 
-            top=50, 
-            max_results=200
+            top=50, # 50 | 15
+            max_results=200 #200 | 20
             )
     except Exception as e:
         return f"Error Retrieving Messages Due to {e}"
@@ -147,7 +138,6 @@ def run_outlook_ingestion(
                 )
                     
     
-
 
 def process_email(
     db: Session,

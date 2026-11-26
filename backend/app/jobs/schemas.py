@@ -7,7 +7,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, UrlConstraints, model_validator
 
 from app.jobs.classifiers.role import JobRoleType, ResumeRecommendation
-from app.jobs.models import JobSource, JobStatus
+from app.jobs.models import JobExtractionStatus, JobSource, JobStatus
 from app.mail.models import EmploymentType, WorkLocation
 
 Title = Annotated[str, Field(min_length=1, max_length=255)]
@@ -34,7 +34,9 @@ class JobBase(BaseModel):
     salary_max: Salary = None
     salary_currency: Currency = None
 
-    description: Description
+    description: Description | None = None
+    extraction_status: JobExtractionStatus = JobExtractionStatus.NOT_ATTEMPTED
+    extraction_method: str | None = None
     job_url: JobUrl
     source: JobSource
 
@@ -45,6 +47,7 @@ class JobBase(BaseModel):
     recommended_resume: ResumeRecommendation | None = None
 
     is_relevant: bool | None = None
+
 
     model_config = ConfigDict(
         extra="forbid",

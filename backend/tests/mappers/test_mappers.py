@@ -8,7 +8,7 @@ from app.mail.mail_services.parsers.mime_parser import build_parsed_email
 from app.mail.models import EmailProvider, EmploymentType
 from app.mail.schemas import EmailCreate
 from app.mail.mail_services.service import WorkLocation, ExtractJob
-from app.jobs.models import JobSource
+from app.jobs.models import JobSource, JobExtractionStatus
 
 from app.mail.normalizer.glassdoor import GlassdoorNormalizer
 
@@ -88,7 +88,7 @@ def test_build_job_create_from_normalized():
     assert result.salary_max == 90000
     assert result.salary_currency == "USD"
 
-    assert result.description == "N/A"
+    assert result.description == None
     
     assert str(result.job_url).startswith("https://www.glassdoor.com/partner")
     assert result.source == JobSource.MAIL
@@ -99,6 +99,63 @@ def test_build_job_create_from_normalized():
     assert result.recommended_resume == ResumeRecommendation.UNKNOWN
 
 
+def test_build_job_create_from_normalized_extractions():
+    raw_email = load_email_fixture(
+        "glassdoor_multiple_jobs.eml"
+    )
+        
+    parsed = build_parsed_email(
+        raw_email,
+        EmailProvider.ICLOUD,
+    )
+
+    jobs = GlassdoorNormalizer().normalize(parsed)
+    select_job = jobs[0]
+
+    fingerprint = "a" * 64
+
+    classification = classify_job(select_job)
+
+    result = build_job_create_from_normalized(
+        normalized=select_job, 
+        fingerprint=fingerprint, 
+        source=JobSource.MAIL,
+        classification=classification,
+        description="Example job description",
+        extraction_status=JobExtractionStatus.SUCCEEDED,
+        extraction_method="dom+text"
+    )
+
+    assert result.description == "Example job description"
+    assert result.extraction_status == JobExtractionStatus.SUCCEEDED
+    assert result.extraction_method == "dom+text"
+
+
+
+def test_build_job_create_from_normalized_defaults_extraction_fields():
+    raw_email = load_email_fixture("glassdoor_multiple_jobs.eml")
+
+    parsed = build_parsed_email(
+        raw_email,
+        EmailProvider.ICLOUD,
+    )
+
+    jobs = GlassdoorNormalizer().normalize(parsed)
+    select_job = jobs[0]
+
+    fingerprint = "a" * 64
+    classification = classify_job(select_job)
+
+    result = build_job_create_from_normalized(
+        normalized=select_job,
+        fingerprint=fingerprint,
+        source=JobSource.MAIL,
+        classification=classification,
+    )
+
+    assert result.extraction_status == JobExtractionStatus.NOT_ATTEMPTED
+    assert result.extraction_method is None
+    
 
 def test_build_job_create():
     extracted = ExtractJob(

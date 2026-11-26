@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from app.jobs.classifiers.role import JobClassification
+from app.jobs.models import JobExtractionStatus
 from app.jobs.schemas import JobCreate, JobSource
 from app.mail.mail_services.service import ExtractJob, parse_salary
 from app.mail.normalizer.base import NormalizedJob
@@ -12,7 +13,10 @@ def build_job_create_from_normalized(
         fingerprint: str,
         source: JobSource,
         email_id: UUID | None = None,
-        classification: JobClassification
+        classification: JobClassification,
+        description: str | None = None,
+        extraction_status: JobExtractionStatus = JobExtractionStatus.NOT_ATTEMPTED,
+        extraction_method: str | None = None,
        
 ) -> JobCreate:
 
@@ -41,12 +45,13 @@ def build_job_create_from_normalized(
             salary_min=salary.salary_min,
             salary_max=salary.salary_max,
             salary_currency=salary.currency,
-            description="N/A",
+            description=description,
+            extraction_status=extraction_status,
+            extraction_method=extraction_method,
             job_url=normalized.job_url,
             source=source,
             email_id=email_id,
             fingerprint=fingerprint,
-
             role_type=classification.role_type,
             recommended_resume=classification.recommended_resume,
             is_relevant=classification.is_relevant

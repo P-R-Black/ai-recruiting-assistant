@@ -43,6 +43,13 @@ class JobBoard(str, enum.Enum):
     UNKNOWN = "unknown"
 
 
+class JobExtractionStatus(str, enum.Enum):
+    NOT_ATTEMPTED = "not_attempted"
+    SUCCEEDED = "succeeded"
+    NO_DESCRIPTION = "no_description"
+    FAILED = "failed"
+
+
 class Job(Base):
     __tablename__ = "jobs"
 
@@ -95,9 +102,9 @@ class Job(Base):
         String(10),
     )
 
-    description: Mapped[str] = mapped_column(
+    description: Mapped[str | None] = mapped_column(
         Text,
-        nullable=False,
+        nullable=True,
     )
 
     job_url: Mapped[str] = mapped_column(
@@ -155,6 +162,20 @@ class Job(Base):
     is_relevant: Mapped[bool] = mapped_column(
         Boolean, 
         nullable=True
+    )
+
+    extraction_status: Mapped[JobExtractionStatus] = mapped_column(
+        Enum(
+            JobExtractionStatus,
+            values_callable=lambda enum_cls: [member.value for member in enum_cls],
+        ),
+        default=JobExtractionStatus.NOT_ATTEMPTED,
+        nullable=False,
+    )
+
+    extraction_method: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
     )
 
 

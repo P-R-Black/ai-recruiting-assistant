@@ -167,6 +167,7 @@ def test_run_outlook_ingestion_fetches_inbox_messages(mocker, db):
         max_results=200,
     )
 
+
 def test_run_outlook_ingestion_parses_messages(mocker, db):
     settings = mocker.Mock()
     access_token = "test-token"

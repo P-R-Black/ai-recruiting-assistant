@@ -2,6 +2,7 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
 
+import app.models  # noqa: F401 — registers Job and Email with Base.metadata
 from alembic import context
 from app.core.config import settings
 from app.core.database import Base

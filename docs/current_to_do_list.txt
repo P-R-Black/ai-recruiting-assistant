@@ -2,7 +2,7 @@ Milestone 1 — Improve the existing dashboard
 Make the current job collection easier to navigate and manage.
 
 0 of 9 complete
-⬜ Open the original job posting using job_url
+✅ Open the original job posting using job_url
 ⬜ Review the existing keyword-based classification in the UI
 ⬜ Allow users to manually override a job's classification
 ⬜ Persist classification overrides in the database
@@ -46,14 +46,14 @@ Prepare reliable job data for AI analysis.
 
 0 of 9 complete
 ⬜ Determine which collected jobs have a usable job_url
-⬜ Design a service for retrieving job-posting content
-⬜ Extract and normalize the full job description where accessible
-⬜ Persist the description and its source
-⬜ Handle expired links, inaccessible pages, and extraction failures
+✅ Design a service for retrieving job-posting content
+✅ Extract and normalize the full job description where accessible
+✅ Persist the description and its source
+✅ Handle expired links, inaccessible pages, and extraction failures
 ⬜ Track extraction status and retry failures safely
 ⬜ Identify missing fields that can be enriched from the posting
 ⬜ Validate enriched values before saving them
-⬜ Add tests using saved or representative job-page fixtures
+✅ Add tests using saved or representative job-page fixtures
 
 
 Milestone 5 — Introduce LLM-powered analysis
@@ -106,3 +106,14 @@ Make the new functionality safe to operate in production.
 5. AI enrichmen 
 ⬜ Enrich missing job field 
 ⬜ Eventually analyze job fit
+
+
+✅
+
+
+What Working on Now
+First, audit usable job URLs.
+
+Second, implement safe retries.
+Third, identify and prioritize additional enrichment fields.
+Fourth, implement validation and tests.

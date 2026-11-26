@@ -1,25 +1,9 @@
-import pytest
-from pathlib import Path
-from app.core.config import settings
 
 from datetime import datetime, timezone
 
-from app.jobs.models import JobSource, Job
-from app.jobs.jobs_services.service import (
-    create_job_from_email, create_job_from_email, persist_normalized_jobs
-    )
-
-
-
-from app.mail.mail_services.parsers.mime_parser import build_parsed_email
 from app.mail.models import EmailProvider
-
 from app.mail.normalizer.base import NormalizedJob
-from app.mail.normalizer.glassdoor import GlassdoorNormalizer
-from app.mail.normalizer.zip_recruiter import ZipRecruiterNormalizer
 
-
-from tests.mail.normalizer.test_glassdoor_normalizer import load_email_fixture, FIXTURES
 
 from app.jobs.classifiers.role import classify_job_title, classify_job, JobRoleType, ResumeRecommendation
 
